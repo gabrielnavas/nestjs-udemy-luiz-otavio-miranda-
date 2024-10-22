@@ -8,3 +8,13 @@ GET {{baseUrl}}/home/hello
 ### ExemploRota
 # @name ExemploDeRota
 GET {{baseUrl}}/home/exemplo
+
+
+### ConceitosManual
+# @name ConceitosManual
+GET {{baseUrl}}/conceitos-manual
+
+
+### ConceitosAutomatico
+# @name ConceitosAutomatico
+GET {{baseUrl}}/conceitos-automatico
