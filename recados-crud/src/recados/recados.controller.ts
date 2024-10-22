@@ -11,7 +11,8 @@ export class RecadosController {
   @Get()
   @HttpCode(HttpStatus.OK)
   findAll(@Query() query: FindAllQuery) {
-    return this.recadosService.findAll(Number(query.page), Number(query.size), query.q)
+    const { page = 0, size = 10, q = '' } = query
+    return this.recadosService.findAll(Number(page), Number(size), q)
   }
 
   @Get(':id')
