@@ -12,6 +12,6 @@ export class AppController {
 
   @Get('exemplo')
   exemplo(): string {
-    return 'exemplo'
+    return this.appService.exemplo()
   }
 }
