@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, InternalServerErrorException, NotFoundException, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, InternalServerErrorException, NotFoundException, Param, Patch, Post } from '@nestjs/common';
 import { RecadoDto } from './dtos';
 import { randomUUID } from 'crypto';
 import { RecadosService } from './recados.service';
@@ -10,11 +10,13 @@ export class RecadosController {
   constructor(private readonly recadosService: RecadosService) { }
 
   @Get()
+  @HttpCode(HttpStatus.OK)
   findAll() {
     return this.recadosService.findAll()
   }
 
   @Get(':id')
+  @HttpCode(HttpStatus.OK)
   findOne(@Param('id') id: string) {
     try {
       return this.recadosService.findOne(id)
@@ -27,11 +29,13 @@ export class RecadosController {
   }
 
   @Post()
+  @HttpCode(HttpStatus.CREATED)
   createOne(@Body() dto: RecadoDto) {
     return this.recadosService.createOne(dto)
   }
 
   @Patch(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
   updateOne(@Param('id') id: string, @Body() dto: RecadoDto) {
     try {
       return this.recadosService.updateOne(id, dto)
@@ -44,6 +48,7 @@ export class RecadosController {
   }
 
   @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
   deleteOne(@Param('id') id: string) {
     try {
       return this.recadosService.deleteOne(id)
