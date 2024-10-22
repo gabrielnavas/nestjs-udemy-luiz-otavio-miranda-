@@ -1,22 +1,35 @@
 import { Injectable } from '@nestjs/common';
 import { RecadoDto } from './dtos';
 import { RecadoNotFoundException } from './exceptions';
-import { randomUUID } from 'crypto';
+import { Recado } from './entities/recado.entity';
 
 @Injectable()
 export class RecadosService {
-  private readonly recados: RecadoDto[] = new Array(50)
+  private readonly recados: Recado[] = new Array(50)
     .fill('')
     .map((_, index) => ({
-      id: randomUUID(),
-      message: `Ola mundo ${index + 1}!!`,
+      id: index + 1,
+      to: `de ${index}`,
+      from: `de ${index}`,
+      createdAt: new Date(),
+      read: false,
+      text: `Ola mundo ${index + 1}!!`,
     }));
 
-  createOne(dto: RecadoDto) {
-    this.recados.push({ id: randomUUID(), message: dto.message });
+  createOne(dto: RecadoDto): RecadoDto {
+    const recado = {
+      id: this.recados.length,
+      to: dto.to,
+      from: dto.to,
+      createdAt: new Date(),
+      read: false,
+      text: dto.text,
+    };
+    this.recados.push(recado);
+    return recado;
   }
 
-  deleteOne(id: string) {
+  deleteOne(id: number) {
     const index = this.recados.findIndex((recado) => recado.id === id);
     if (index === -1) {
       throw new RecadoNotFoundException('Recado não encontrado.');
@@ -24,7 +37,7 @@ export class RecadosService {
     this.recados.splice(index, 1);
   }
 
-  findOne(id: string) {
+  findOne(id: number) {
     const recado = this.recados.find((recado) => recado.id === id);
     if (!recado) {
       throw new RecadoNotFoundException('Recado não encontrado.');
@@ -37,8 +50,11 @@ export class RecadosService {
     const end = start + size;
     let recados = [...this.recados];
     if (typeof q === 'string' && q.length > 0) {
-      recados = recados.filter((recado) =>
-        recado.message.toLocaleLowerCase().includes(q.toLocaleLowerCase()),
+      recados = recados.filter(
+        (recado) =>
+          recado.text.toLocaleLowerCase().includes(q.toLocaleLowerCase()) ||
+          recado.to.toLocaleLowerCase().includes(q.toLocaleLowerCase()) ||
+          recado.from.toLocaleLowerCase().includes(q.toLocaleLowerCase()),
       );
     }
     recados = recados.slice(start, end);
@@ -49,11 +65,14 @@ export class RecadosService {
     };
   }
 
-  updateOne(id: string, dto: RecadoDto) {
+  updateOne(id: number, dto: RecadoDto) {
     const index = this.recados.findIndex((recado) => recado.id === id);
     if (index === -1) {
       throw new RecadoNotFoundException('Recado não encontrado.');
     }
-    this.recados[index].message = dto.message;
+    this.recados[index].to = dto.to;
+    this.recados[index].from = dto.from;
+    this.recados[index].text = dto.text;
+    this.recados[index].read = dto.read;
   }
 }

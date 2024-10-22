@@ -6,7 +6,9 @@ POST {{baseUrl}}/recados
 Content-Type: application/json
 
 {
-  "message": "OPA!"  
+  "to": "de 9",
+  "from": "de 5",
+  "text": "Ola mundo 5!!"
 }
 
 ###
@@ -17,16 +19,18 @@ GET {{baseUrl}}/recados
 ###
 
 ###
-GET {{baseUrl}}/recados/58df1fc0-4492-4371-ac19-da3ea4aee862
+GET {{baseUrl}}/recados/1
 ###
 
 ###
-PATCH {{baseUrl}}/recados/58df1fc0-4492-4371-ac19-da3ea4aee862
+PATCH {{baseUrl}}/recados/1
 Content-Type: application/json
 
 {
-  "message": "OPA!232"  
+  "to": "de 9",
+  "from": "de 5",
+  "text": "Ola mundo 5!!"
 }
 
 ###
-DELETE {{baseUrl}}/recados/e71b0787-d7ae-4f1a-b9c2-914d616936fd
+DELETE {{baseUrl}}/recados/1
