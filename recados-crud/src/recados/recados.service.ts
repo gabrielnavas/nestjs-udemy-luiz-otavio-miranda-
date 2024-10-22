@@ -29,14 +29,18 @@ export class RecadosService {
     return recado;
   }
 
-  findAll(page: number, size: number) {
+  findAll(page: number, size: number, q: string) {
     const start = (page - 1) * size
     const end = start + size
-    const recados = this.recados.slice(start, end);
+    let recados = [...this.recados]
+    if (typeof q === 'string' && q.length > 0) {
+      recados = recados.filter(recado => recado.message.toLocaleLowerCase().includes(q.toLocaleLowerCase()))
+    }
+    recados = recados.slice(start, end);
     return {
       recados,
       totaItems: this.recados.length,
-      totalPages: Math.ceil(this.recados.length/size)
+      totalPages: Math.ceil(this.recados.length / size)
     }
   }
 

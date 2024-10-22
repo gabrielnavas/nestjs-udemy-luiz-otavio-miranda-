@@ -10,7 +10,10 @@ Content-Type: application/json
 }
 
 ###
-GET {{baseUrl}}/recados?page=1&size=3
+GET {{baseUrl}}/recados
+?page=1
+&size=2
+&q=mundo 3
 ###
 
 ###
