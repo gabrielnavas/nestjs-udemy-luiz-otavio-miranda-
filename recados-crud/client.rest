@@ -1,11 +1,6 @@
 
 @baseUrl = http://localhost:3000
 
-GET {{baseUrl}}/recados
-###
-
-GET {{baseUrl}}/recados/4bebb0f6-fca4-4853-b30d-7034c5f783cf
-
 ###
 POST {{baseUrl}}/recados
 Content-Type: application/json
@@ -15,12 +10,20 @@ Content-Type: application/json
 }
 
 ###
-PATCH {{baseUrl}}/recados/90070f17-db2b-42b6-9bf9-2d6defe7d4cd
+GET {{baseUrl}}/recados
+###
+
+###
+GET {{baseUrl}}/recados/e71b0787-d7ae-4f1a-b9c2-914d616936fd
+###
+
+###
+PATCH {{baseUrl}}/recados/e71b0787-d7ae-4f1a-b9c2-914d616936fd
 Content-Type: application/json
 
 {
-  "message": "OPA!2"  
+  "message": "OPA!232"  
 }
 
 ###
-DELETE {{baseUrl}}/recados/4bebb0f6-fca4-4853-b30d-7034c5f783cf
+DELETE {{baseUrl}}/recados/e71b0787-d7ae-4f1a-b9c2-914d616936fd
