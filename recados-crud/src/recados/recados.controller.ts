@@ -1,6 +1,5 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, InternalServerErrorException, NotFoundException, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, InternalServerErrorException, NotFoundException, Param, Patch, Post, Query } from '@nestjs/common';
 import { RecadoDto } from './dtos';
-import { randomUUID } from 'crypto';
 import { RecadosService } from './recados.service';
 import { RecadoNotFoundException } from './exceptions';
 
@@ -11,8 +10,8 @@ export class RecadosController {
 
   @Get()
   @HttpCode(HttpStatus.OK)
-  findAll() {
-    return this.recadosService.findAll()
+  findAll(@Query('page') page: string, @Query("size") size: string) {
+    return this.recadosService.findAll(Number(page), Number(size))
   }
 
   @Get(':id')

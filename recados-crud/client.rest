@@ -10,15 +10,15 @@ Content-Type: application/json
 }
 
 ###
-GET {{baseUrl}}/recados
+GET {{baseUrl}}/recados?page=1&size=3
 ###
 
 ###
-GET {{baseUrl}}/recados/e71b0787-d7ae-4f1a-b9c2-914d616936fd
+GET {{baseUrl}}/recados/58df1fc0-4492-4371-ac19-da3ea4aee862
 ###
 
 ###
-PATCH {{baseUrl}}/recados/e71b0787-d7ae-4f1a-b9c2-914d616936fd
+PATCH {{baseUrl}}/recados/58df1fc0-4492-4371-ac19-da3ea4aee862
 Content-Type: application/json
 
 {

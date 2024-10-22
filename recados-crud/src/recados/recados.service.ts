@@ -5,7 +5,9 @@ import { randomUUID } from 'crypto';
 
 @Injectable()
 export class RecadosService {
-  private readonly recados: RecadoDto[] = []
+  private readonly recados: RecadoDto[] = new Array(50).fill('').map((_, index) =>
+    ({ id: randomUUID(), message: `Ola mundo ${index + 1}!!` })
+  );
 
   createOne(dto: RecadoDto) {
     this.recados.push({ id: randomUUID(), message: dto.message })
@@ -27,8 +29,15 @@ export class RecadosService {
     return recado;
   }
 
-  findAll() {
-    return this.recados;
+  findAll(page: number, size: number) {
+    const start = (page - 1) * size
+    const end = start + size
+    const recados = this.recados.slice(start, end);
+    return {
+      recados,
+      totaItems: this.recados.length,
+      totalPages: Math.ceil(this.recados.length/size)
+    }
   }
 
   updateOne(id: string, dto: RecadoDto) {
