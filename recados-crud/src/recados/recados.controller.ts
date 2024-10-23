@@ -8,6 +8,7 @@ import {
   InternalServerErrorException,
   NotFoundException,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   Query,
@@ -31,7 +32,7 @@ export class RecadosController {
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
-  findOne(@Param('id') id: number) {
+  findOne(@Param('id', ParseIntPipe) id: number) {
     try {
       return this.recadosService.findOne(id);
     } catch (err) {
@@ -52,7 +53,7 @@ export class RecadosController {
 
   @Patch(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  updateOne(@Param('id') id: number, @Body() dto: UpdateRecadoDto) {
+  updateOne(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateRecadoDto) {
     try {   
       return this.recadosService.updateOne(id, dto);
     } catch (err) {
@@ -67,7 +68,7 @@ export class RecadosController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  deleteOne(@Param('id') id: number) {
+  deleteOne(@Param('id', ParseIntPipe) id: number) {    
     try {
       return this.recadosService.deleteOne(id);
     } catch (err) {
