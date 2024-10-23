@@ -1,30 +1,9 @@
-import {
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  MaxLength,
-  MinLength,
-} from 'class-validator';
+import { PartialType } from '@nestjs/mapped-types';
+import { CreateRecadoDto } from './create-recado.dto';
+import { IsBoolean, IsOptional } from 'class-validator';
 
-export class UpdateRecadoDto {
-  @IsString()
-  @IsNotEmpty()
-  @MinLength(2)
-  @MaxLength(100)
+export class UpdateRecadoDto extends PartialType(CreateRecadoDto) {
+  @IsBoolean()
   @IsOptional()
-  text?: Readonly<string>;
-
-  @IsString()
-  @IsNotEmpty()
-  @MinLength(2)
-  @MaxLength(100)
-  @IsOptional()
-  from?: Readonly<string>;
-
-  @IsString()
-  @IsNotEmpty()
-  @MinLength(2)
-  @MaxLength(100)
-  @IsOptional()
-  to?: Readonly<string>;
+  read?: boolean;
 }

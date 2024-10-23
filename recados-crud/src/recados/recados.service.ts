@@ -81,5 +81,8 @@ export class RecadosService {
     if(dto.text) {
       this.recados[index].text = dto.text;
     }
+    if(dto.read) {
+      this.recados[index].read = dto.read;
+    }
   }
 }

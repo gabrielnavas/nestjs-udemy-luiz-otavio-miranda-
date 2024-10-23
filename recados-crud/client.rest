@@ -27,9 +27,10 @@ PATCH {{baseUrl}}/recados/1
 Content-Type: application/json
 
 {
-  "to": "de 9",
+  "to": "de 11",
   "from": "de 5",
-  "text": "Ola mundo 55555!!"
+  "text": "Ola mundo2 123!!",
+  "read": true
 }
 
 ###

@@ -53,7 +53,7 @@ export class RecadosController {
   @Patch(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   updateOne(@Param('id') id: number, @Body() dto: UpdateRecadoDto) {
-    try {
+    try {   
       return this.recadosService.updateOne(Number(id), dto);
     } catch (err) {
       if (err instanceof RecadoNotFoundException) {
