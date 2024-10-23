@@ -8,7 +8,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
-      
+
       // deve ser usado o .env
       host: 'localhost',
       port: 5432,
@@ -18,13 +18,17 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
       // carrega entidades sem precisar especifica-las
       // não precisa especificar as entidades no app module
-      autoLoadEntities: true, 
+      autoLoadEntities: true,
 
-      // sincroniza as tabelas com o banco de dados. 
-      // Não deve ser usado em produção
-      synchronize: true, 
-    }),  
-    RecadosModule
+      // sincroniza as tabelas com o banco de dados.
+      // não deve ser usado em produção
+      synchronize: true,
+
+      // habilita o log de queries SQL no console
+      // não usar em produção
+      logging: true,
+    }),
+    RecadosModule,
   ],
   controllers: [AppController],
   providers: [AppService],

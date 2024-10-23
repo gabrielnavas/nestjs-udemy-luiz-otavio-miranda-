@@ -29,6 +29,6 @@ export class Recado {
   })
   createdAt: Date;
 
-  @UpdateDateColumn({ type: 'timestamptz', nullable: true })
-  updatedAt?: Date;
+  @UpdateDateColumn({ type: 'timestamptz' })
+  updatedAt: Date;
 }

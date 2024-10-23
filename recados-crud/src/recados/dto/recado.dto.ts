@@ -5,5 +5,6 @@ export type RecadoDto = {
   to: Readonly<string>;
   read: Readonly<boolean>;
   createdAt: Readonly<Date>;
+  updatedAt: Readonly<Date>;
 };
 
