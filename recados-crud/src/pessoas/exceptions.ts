@@ -5,7 +5,7 @@ export class AlreadyExistsPessoaWithException extends Error {
 }
 
 export class PessoaNotFoundException extends Error {
-  constructor() {
-    super('Pessoa não encontrada');
+  constructor(message: string = 'Pessoa não encontrada') {
+    super(message);
   }
 }

@@ -1,7 +1,10 @@
+import { Pessoa } from 'src/pessoas/entities/pessoa.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -14,11 +17,13 @@ export class Recado {
   @Column({ type: 'varchar', length: 255 })
   text: string;
 
-  @Column({ type: 'varchar', length: 50 })
-  from: string;
+  @ManyToOne(() => Pessoa, {nullable: false})
+  @JoinColumn({ name: 'from_id' })
+  from: Pessoa;
 
-  @Column({ type: 'varchar', length: 50 })
-  to: string;
+  @ManyToOne(() => Pessoa, {nullable: false})
+  @JoinColumn({ name: 'to_id' })
+  to: Pessoa;
 
   @Column({ type: 'boolean', default: false })
   read: boolean;

@@ -6,13 +6,13 @@ POST {{baseUrl}}/pessoas
 Content-Type: application/json
 
 {
-  "email": "batman4@email.com",
+  "email": "batman2@email.com",
   "password": "!@12bbAA",
   "name": "Batman da Silva"
 }
 
 ###
-GET {{baseUrl}}/pessoas/11
+GET {{baseUrl}}/pessoas/2
 
 ### 
 PATCH {{baseUrl}}/pessoas/11
@@ -33,8 +33,8 @@ POST {{baseUrl}}/recados
 Content-Type: application/json
 
 {
-  "to": "92",
-  "from": "de 5",
+  "fromPessoaId": 1,
+  "toPessoaId": 2,
   "text": "Ola mundo 5!!"
 }
 
