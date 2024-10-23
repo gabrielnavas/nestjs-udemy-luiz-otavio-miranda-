@@ -72,8 +72,14 @@ export class RecadosService {
     if (index === -1) {
       throw new RecadoNotFoundException('Recado não encontrado.');
     }
-    this.recados[index].to = dto.to;
-    this.recados[index].from = dto.from;
-    this.recados[index].text = dto.text;
+    if(dto.to) {
+      this.recados[index].to = dto.to;
+    }
+    if(dto.from) {
+      this.recados[index].from = dto.from;
+    }
+    if(dto.text) {
+      this.recados[index].text = dto.text;
+    }
   }
 }

@@ -6,7 +6,7 @@ POST {{baseUrl}}/recados
 Content-Type: application/json
 
 {
-  "to": "de 9",
+  "to": "9",
   "from": "de 5",
   "text": "Ola mundo 5!!"
 }
