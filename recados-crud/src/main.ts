@@ -5,7 +5,8 @@ import { ValidationPipe } from '@nestjs/common';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe({
-    whitelist: true, // remove valores que não estão no DTO num Post, Patch ou put por exemplo.
+    whitelist: true, // remove valores {chave:valor} que não estão no DTO num Post, Patch ou put por exemplo.
+    forbidNonWhitelisted: true,  // lançar error quando {chave:valor} não existir no body
   }))
   await app.listen(process.env.PORT ?? 3000);
 }
