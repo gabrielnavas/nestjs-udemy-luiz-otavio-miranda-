@@ -33,7 +33,7 @@ export class RecadosController {
   @HttpCode(HttpStatus.OK)
   findOne(@Param('id') id: number) {
     try {
-      return this.recadosService.findOne(Number(id));
+      return this.recadosService.findOne(id);
     } catch (err) {
       if (err instanceof RecadoNotFoundException) {
         throw new NotFoundException(err.message);
@@ -54,7 +54,7 @@ export class RecadosController {
   @HttpCode(HttpStatus.NO_CONTENT)
   updateOne(@Param('id') id: number, @Body() dto: UpdateRecadoDto) {
     try {   
-      return this.recadosService.updateOne(Number(id), dto);
+      return this.recadosService.updateOne(id, dto);
     } catch (err) {
       if (err instanceof RecadoNotFoundException) {
         throw new NotFoundException(err.message);
@@ -67,9 +67,9 @@ export class RecadosController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  deleteOne(@Param('id') id: string) {
+  deleteOne(@Param('id') id: number) {
     try {
-      return this.recadosService.deleteOne(Number(id));
+      return this.recadosService.deleteOne(id);
     } catch (err) {
       if (err instanceof RecadoNotFoundException) {
         throw new NotFoundException(err.message);

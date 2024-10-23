@@ -7,6 +7,7 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({
     whitelist: true, // remove valores {chave:valor} que não estão no DTO num Post, Patch ou put por exemplo.
     forbidNonWhitelisted: true,  // lançar error quando {chave:valor} não existir no body
+    transform: true, // transformar os valores do body em tipos específicos, como parametros numéricos e body
   }))
   await app.listen(process.env.PORT ?? 3000);
 }
