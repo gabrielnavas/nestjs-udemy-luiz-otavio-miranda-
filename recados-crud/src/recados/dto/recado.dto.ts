@@ -7,4 +7,3 @@ export type RecadoDto = {
   createdAt: Readonly<Date>;
   updatedAt: Readonly<Date>;
 };
-

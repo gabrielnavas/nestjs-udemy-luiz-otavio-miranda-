@@ -53,8 +53,11 @@ export class RecadosController {
 
   @Patch(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  updateOne(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateRecadoDto) {
-    try {   
+  updateOne(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: UpdateRecadoDto,
+  ) {
+    try {
       return this.recadosService.updateOne(id, dto);
     } catch (err) {
       if (err instanceof RecadoNotFoundException) {
@@ -68,9 +71,9 @@ export class RecadosController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  deleteOne(@Param('id', ParseIntPipe) id: number) {    
+  async deleteOne(@Param('id', ParseIntPipe) id: number) {
     try {
-      return this.recadosService.deleteOne(id);
+      await this.recadosService.deleteOne(id);
     } catch (err) {
       if (err instanceof RecadoNotFoundException) {
         throw new NotFoundException(err.message);

@@ -1,4 +1,11 @@
-import { IsNotEmpty, isString, IsString, MaxLength, Min, MinLength } from 'class-validator';
+import {
+  IsNotEmpty,
+  isString,
+  IsString,
+  MaxLength,
+  Min,
+  MinLength,
+} from 'class-validator';
 
 export class CreateRecadoDto {
   @IsString()
