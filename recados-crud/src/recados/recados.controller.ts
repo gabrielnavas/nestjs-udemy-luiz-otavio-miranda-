@@ -12,9 +12,11 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import { FindAllQuery, RecadoDto } from './dtos';
+import { FindAllQuery } from './dto/find-all-query.dto';
 import { RecadosService } from './recados.service';
 import { RecadoNotFoundException } from './exceptions';
+import { CreateRecadoDto } from './dto/create-recado.dto';
+import { UpdateRecadoDto } from './dto/update-recado.dto';
 
 @Controller('recados')
 export class RecadosController {
@@ -31,8 +33,6 @@ export class RecadosController {
   @HttpCode(HttpStatus.OK)
   findOne(@Param('id') id: number) {
     try {
-      console.log(typeof id);
-      
       return this.recadosService.findOne(Number(id));
     } catch (err) {
       if (err instanceof RecadoNotFoundException) {
@@ -46,13 +46,13 @@ export class RecadosController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  createOne(@Body() dto: RecadoDto) {
+  createOne(@Body() dto: CreateRecadoDto) {
     return this.recadosService.createOne(dto);
   }
 
   @Patch(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  updateOne(@Param('id') id: number, @Body() dto: RecadoDto) {
+  updateOne(@Param('id') id: number, @Body() dto: UpdateRecadoDto) {
     try {
       return this.recadosService.updateOne(Number(id), dto);
     } catch (err) {
