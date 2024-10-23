@@ -2,9 +2,30 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { RecadosModule } from 'src/recados/recados.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
-  imports: [RecadosModule],
+  imports: [
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      
+      // deve ser usado o .env
+      host: 'localhost',
+      port: 5432,
+      database: 'postgres',
+      username: 'postgres',
+      password: 'postgres123',
+
+      // carrega entidades sem precisar especifica-las
+      // não precisa especificar as entidades no app module
+      autoLoadEntities: true, 
+
+      // sincroniza as tabelas com o banco de dados. 
+      // Não deve ser usado em produção
+      synchronize: true, 
+    }),  
+    RecadosModule
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
