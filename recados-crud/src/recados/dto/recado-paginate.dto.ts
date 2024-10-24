@@ -3,6 +3,6 @@ import { RecadoDto } from './recado.dto';
 
 export class RecadoDtoPaginate {
   recados: RecadoDto[];
-  totaItems: number;
+  totalItems: number;
   totalPages: number;
 }

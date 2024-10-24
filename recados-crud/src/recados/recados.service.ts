@@ -60,7 +60,26 @@ export class RecadosService {
   }
 
   async findOne(id: number) {
-    const recado = await this.recadoRepository.findOneBy({ id });
+    const recado = await this.recadoRepository.findOne({
+      where: { id },
+      relations: ['to', 'from'],
+      select: {
+        to: {
+          id: true,
+          name: true,
+          createdAt: true,
+          email: true,
+          updatedAt: true,
+        },
+        from: {
+          id: true,
+          name: true,
+          createdAt: true,
+          email: true,
+          updatedAt: true,
+        },
+      },
+    });
     if (!recado) {
       throw new RecadoNotFoundException('Recado não encontrado.');
     }
@@ -72,27 +91,37 @@ export class RecadosService {
     size: number,
     q: string,
   ): Promise<RecadoDtoPaginate> {
-    const query = this.recadoRepository
-      .createQueryBuilder('recado')
-      .leftJoinAndSelect('recado.from', 'p_from') 
-      .leftJoinAndSelect('recado.to', 'p_to')
-      .skip((page - 1) * size)
-      .take(size);
+    const recados = await this.recadoRepository.find({
+      take: size,
+      skip: (page - 1) * size,
+      relations: ['to', 'from'],
+      order: {
+        createdAt: 'DESC',
+      },
+      select: {
+        to: {
+          id: true,
+          name: true,
+          createdAt: true,
+          email: true,
+          updatedAt: true,
+        },
+        from: {
+          id: true,
+          name: true,
+          createdAt: true,
+          email: true,
+          updatedAt: true,
+        },
+      },
+    });
 
-    if (q) {
-      query.andWhere(
-        new Brackets((qb) => {
-          qb.where('recado.text ILIKE :q', { q: `%${q}%` })
-        }),
-      );
-    }
-
-    const [recados, totaItems] = await query.getManyAndCount();
+    const totalItems = await this.recadoRepository.count();
 
     return {
       recados: recados.map(this.recadosWrapper.mapEntityToDto),
-      totaItems,
-      totalPages: Math.ceil(totaItems / size),
+      totalItems,
+      totalPages: Math.ceil(totalItems / size),
     };
   }
 
@@ -101,7 +130,7 @@ export class RecadosService {
     if (!recado) {
       throw new RecadoNotFoundException('Recado não encontrado.');
     }
-    
+
     if (dto.toPessoaId) {
       const toPessoa = await this.pessoaRepository.findOneBy({
         id: dto.toPessoaId,
