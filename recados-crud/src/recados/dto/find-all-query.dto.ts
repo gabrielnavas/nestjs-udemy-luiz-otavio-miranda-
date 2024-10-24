@@ -5,7 +5,7 @@ import {
   IsString,
   MaxLength,
 } from 'class-validator';
-import { PaginationDto } from 'src/app/common/dto/pagination.dto';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
 
 export class FindAllQueryDto extends PartialType(PaginationDto) {
   @IsOptional()

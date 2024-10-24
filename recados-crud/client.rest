@@ -35,14 +35,14 @@ Content-Type: application/json
 {
   "fromPessoaId": 1,
   "toPessoaId": 2,
-  "text": "Ola mundo 5!!"
+  "text": "Welcome to the Jungle"
 }
 
 ###
 GET {{baseUrl}}/recados
 ?page=1
-&size=50
-&q=mundo
+&size=10
+&q=Jungle
 ###
 
 ###
