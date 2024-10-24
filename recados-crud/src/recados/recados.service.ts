@@ -4,12 +4,13 @@ import { Recado } from './entities/recado.entity';
 import { UpdateRecadoDto } from './dto/update-recado.dto';
 import { RecadoDto } from './dto/recado.dto';
 import { CreateRecadoDto } from './dto/create-recado.dto';
-import { Brackets, ILike, Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RecadoDtoPaginate } from './dto/recado-paginate.dto';
 import { RecadosWrapper } from './recados.wrapper';
 import { PessoaNotFoundException } from 'src/pessoas/exceptions';
 import { Pessoa } from 'src/pessoas/entities/pessoa.entity';
+import { FindAllQueryDto } from './dto/find-all-query.dto';
 
 // Atenção
 // em produção deve-se usar transações
@@ -86,12 +87,17 @@ export class RecadosService {
     return recado;
   }
 
-  async findAll(
-    page: number,
-    size: number,
-    q: string,
-  ): Promise<RecadoDtoPaginate> {
+  async findAll({
+    q,
+    page,
+    size,
+  }: FindAllQueryDto): Promise<RecadoDtoPaginate> {
     const recados = await this.recadoRepository.find({
+      where: q
+        ? {
+            text: ILike(`%${q}%`),
+          }
+        : {},
       take: size,
       skip: (page - 1) * size,
       relations: ['to', 'from'],

@@ -1,27 +1,13 @@
-import { Type } from 'class-transformer';
+import { PartialType } from '@nestjs/mapped-types';
+
 import {
-  IsInt,
   IsOptional,
   IsString,
-  Max,
   MaxLength,
-  Min,
 } from 'class-validator';
+import { PaginationDto } from 'src/app/common/dto/pagination.dto';
 
-export class FindAllQuery {
-  @IsOptional()
-  @IsInt()
-  @Min(0)
-  @Max(50)
-  @Type(() => Number)
-  readonly size: number;
-
-  @IsOptional()
-  @IsInt()
-  @Min(1)
-  @Type(() => Number)
-  readonly page: number;
-
+export class FindAllQueryDto extends PartialType(PaginationDto) {
   @IsOptional()
   @IsString()
   @MaxLength(100)

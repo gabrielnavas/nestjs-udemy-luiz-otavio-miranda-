@@ -12,8 +12,9 @@ import {
   Patch,
   Post,
   Query,
+  UsePipes,
 } from '@nestjs/common';
-import { FindAllQuery } from './dto/find-all-query.dto';
+import { FindAllQueryDto } from './dto/find-all-query.dto';
 import { RecadosService } from './recados.service';
 import { RecadoNotFoundException } from './exceptions';
 import { CreateRecadoDto } from './dto/create-recado.dto';
@@ -25,11 +26,8 @@ export class RecadosController {
 
   @Get()
   @HttpCode(HttpStatus.OK)
-  findAll(@Query() query: FindAllQuery) {
-    const { page = 0, size = 10, q = '' } = query;
-    console.log(typeof page, typeof size, typeof q);
-    
-    return this.recadosService.findAll(Number(page), Number(size), q);
+  findAll(@Query() dto: FindAllQueryDto) {
+    return this.recadosService.findAll(dto);
   }
 
   @Get(':id')
