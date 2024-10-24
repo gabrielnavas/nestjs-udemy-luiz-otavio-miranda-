@@ -19,6 +19,7 @@ import { RecadosService } from './recados.service';
 import { RecadoNotFoundException } from './exceptions';
 import { CreateRecadoDto } from './dto/create-recado.dto';
 import { UpdateRecadoDto } from './dto/update-recado.dto';
+import { ParseIntIdPipe } from 'src/common/pipes/parse-int-id.pipe';
 
 @Controller('recados')
 export class RecadosController {
@@ -32,9 +33,11 @@ export class RecadosController {
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
-  findOne(@Param('id', ParseIntPipe) id: number) {
+  async findOne(@Param('id', ParseIntIdPipe) id: number) {
+    console.log(id, typeof id);
+
     try {
-      return this.recadosService.findOne(id);
+      return await this.recadosService.findOne(id);
     } catch (err) {
       if (err instanceof RecadoNotFoundException) {
         throw new NotFoundException(err.message);
