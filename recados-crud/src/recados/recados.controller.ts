@@ -23,6 +23,7 @@ import { UpdateRecadoDto } from './dto/update-recado.dto';
 import { ParseIntIdPipe } from 'src/common/pipes/parse-int-id.pipe';
 import { AddHeaderInterceptor } from 'src/common/interceptors/add-header.interceptor';
 import { TimingConnectionInterceptior } from 'src/common/interceptors/timing-connection.interceptor';
+import { ErrorHandlingInterceptior } from 'src/common/interceptors/error-handling.interceptor';
 
 @Controller('recados')
 export class RecadosController {
@@ -37,8 +38,10 @@ export class RecadosController {
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
+  @UseInterceptors(ErrorHandlingInterceptior)
   async findOne(@Param('id', ParseIntIdPipe) id: number) {
     console.log(id, typeof id);
+    throw new Error('aaaaaa')
 
     try {
       return await this.recadosService.findOne(id);
