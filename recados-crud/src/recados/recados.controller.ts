@@ -27,6 +27,8 @@ export class RecadosController {
   @HttpCode(HttpStatus.OK)
   findAll(@Query() query: FindAllQuery) {
     const { page = 0, size = 10, q = '' } = query;
+    console.log(typeof page, typeof size, typeof q);
+    
     return this.recadosService.findAll(Number(page), Number(size), q);
   }
 
