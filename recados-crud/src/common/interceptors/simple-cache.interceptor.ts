@@ -1,6 +1,12 @@
-import { CallHandler, ExecutionContext, NestInterceptor } from '@nestjs/common';
+import {
+  CallHandler,
+  ExecutionContext,
+  Injectable,
+  NestInterceptor,
+} from '@nestjs/common';
 import { Observable, of, tap } from 'rxjs';
 
+@Injectable()
 export class SimpleCacheInterceptor implements NestInterceptor {
   private readonly cache = new Map();
 
@@ -18,7 +24,6 @@ export class SimpleCacheInterceptor implements NestInterceptor {
       tap((data) => {
         this.cache.set(url, data);
         console.log('Armazenado em cache', url);
-        
       }),
     );
   }

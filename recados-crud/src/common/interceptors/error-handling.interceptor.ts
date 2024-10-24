@@ -3,12 +3,14 @@ import {
   CallHandler,
   ConflictException,
   ExecutionContext,
+  Injectable,
   InternalServerErrorException,
   NestInterceptor,
   NotFoundException,
 } from '@nestjs/common';
 import { catchError, Observable, throwError } from 'rxjs';
 
+@Injectable()
 export class ErrorHandlingInterceptor implements NestInterceptor {
   intercept(
     context: ExecutionContext,
