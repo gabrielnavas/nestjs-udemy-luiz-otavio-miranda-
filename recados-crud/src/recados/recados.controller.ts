@@ -12,7 +12,7 @@ import {
   Patch,
   Post,
   Query,
-  UsePipes,
+  UseInterceptors,
 } from '@nestjs/common';
 import { FindAllQueryDto } from './dto/find-all-query.dto';
 import { RecadosService } from './recados.service';
@@ -20,8 +20,10 @@ import { RecadoNotFoundException } from './exceptions';
 import { CreateRecadoDto } from './dto/create-recado.dto';
 import { UpdateRecadoDto } from './dto/update-recado.dto';
 import { ParseIntIdPipe } from 'src/common/pipes/parse-int-id.pipe';
+import { AddHeaderInterceptor } from 'src/common/interceptors/add-header.interceptor';
 
 @Controller('recados')
+@UseInterceptors(AddHeaderInterceptor)
 export class RecadosController {
   constructor(private readonly recadosService: RecadosService) {}
 
