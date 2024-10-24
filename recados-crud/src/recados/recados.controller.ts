@@ -5,8 +5,6 @@ import {
   Get,
   HttpCode,
   HttpStatus,
-  InternalServerErrorException,
-  NotFoundException,
   Param,
   ParseIntPipe,
   Patch,
@@ -17,13 +15,12 @@ import {
 } from '@nestjs/common';
 import { FindAllQueryDto } from './dto/find-all-query.dto';
 import { RecadosService } from './recados.service';
-import { RecadoNotFoundException } from './exceptions';
 import { CreateRecadoDto } from './dto/create-recado.dto';
 import { UpdateRecadoDto } from './dto/update-recado.dto';
 import { ParseIntIdPipe } from 'src/common/pipes/parse-int-id.pipe';
 import { AddHeaderInterceptor } from 'src/common/interceptors/add-header.interceptor';
 import { TimingConnectionInterceptior } from 'src/common/interceptors/timing-connection.interceptor';
-import { ErrorHandlingInterceptior } from 'src/common/interceptors/error-handling.interceptor';
+import { ErrorHandlingInterceptor } from 'src/common/interceptors/error-handling.interceptor';
 
 @Controller('recados')
 export class RecadosController {
@@ -38,21 +35,9 @@ export class RecadosController {
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
-  @UseInterceptors(ErrorHandlingInterceptior)
+  @UseInterceptors(ErrorHandlingInterceptor)
   async findOne(@Param('id', ParseIntIdPipe) id: number) {
-    console.log(id, typeof id);
-    throw new Error('aaaaaa')
-
-    try {
-      return await this.recadosService.findOne(id);
-    } catch (err) {
-      if (err instanceof RecadoNotFoundException) {
-        throw new NotFoundException(err.message);
-      }
-      throw new InternalServerErrorException(
-        'Ocorreu um problema. Tente novamente mais tarde',
-      );
-    }
+    return await this.recadosService.findOne(id);
   }
 
   @Post()
@@ -68,31 +53,13 @@ export class RecadosController {
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdateRecadoDto,
   ) {
-    try {
-      return this.recadosService.updateOne(id, dto);
-    } catch (err) {
-      if (err instanceof RecadoNotFoundException) {
-        throw new NotFoundException(err.message);
-      }
-      throw new InternalServerErrorException(
-        'Ocorreu um problema. Tente novamente mais tarde',
-      );
-    }
+    return this.recadosService.updateOne(id, dto);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @UsePipes(ParseIntPipe)
   async deleteOne(@Param('id') id: number) {
-    try {
-      await this.recadosService.deleteOne(id);
-    } catch (err) {
-      if (err instanceof RecadoNotFoundException) {
-        throw new NotFoundException(err.message);
-      }
-      throw new InternalServerErrorException(
-        'Ocorreu um problema. Tente novamente mais tarde',
-      );
-    }
+    await this.recadosService.deleteOne(id);
   }
 }

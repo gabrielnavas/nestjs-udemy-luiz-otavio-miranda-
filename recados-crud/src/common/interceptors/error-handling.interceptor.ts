@@ -1,7 +1,15 @@
-import { CallHandler, ExecutionContext, NestInterceptor } from '@nestjs/common';
+import {
+  BadRequestException,
+  CallHandler,
+  ConflictException,
+  ExecutionContext,
+  InternalServerErrorException,
+  NestInterceptor,
+  NotFoundException,
+} from '@nestjs/common';
 import { catchError, Observable, throwError } from 'rxjs';
 
-export class ErrorHandlingInterceptior implements NestInterceptor {
+export class ErrorHandlingInterceptor implements NestInterceptor {
   intercept(
     context: ExecutionContext,
     next: CallHandler<any>,
@@ -10,7 +18,19 @@ export class ErrorHandlingInterceptior implements NestInterceptor {
       catchError((err) => {
         // pega qualquer tipo de erro
         console.log(err.message);
-        return throwError(() => err)
+        return throwError(() => {
+          // modifico o erro
+          if (err instanceof NotFoundException) {
+            return new NotFoundException(err.message);
+          }
+          if (err instanceof ConflictException) {
+            return new BadRequestException(err.message);
+          } else {
+            return new InternalServerErrorException(
+              'Houve um problema. Tente novamente mais tarde.',
+            );
+          }
+        });
       }),
     );
   }

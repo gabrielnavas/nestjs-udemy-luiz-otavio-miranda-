@@ -1,15 +1,21 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+
 import { CreatePessoaDto } from './dto/create-pessoa.dto';
 import { UpdatePessoaDto } from './dto/update-pessoa.dto';
-import { InjectRepository } from '@nestjs/typeorm';
 import { Pessoa } from './entities/pessoa.entity';
-import { Repository } from 'typeorm';
 import { PessoaDto } from './dto/pessoa.dto';
-import {
-  AlreadyExistsPessoaWithException,
-  PessoaNotFoundException,
-} from './exceptions';
 import { PessoaWrapper } from './pessoa.wrapper';
+
+// Atenção
+// em produção deve-se usar transações
+// adicione se for o caso
 
 @Injectable()
 export class PessoasService {
@@ -24,7 +30,7 @@ export class PessoasService {
       email: dto.email,
     });
     if (userByEmail !== null) {
-      throw new AlreadyExistsPessoaWithException('E-mail');
+      throw new ConflictException('Já existe uma pessoa com esse e-mail.');
     }
 
     const person = this.pessoaRepository.create({
@@ -39,7 +45,7 @@ export class PessoasService {
   async findOne(id: number): Promise<PessoaDto> {
     const pessoa = await this.pessoaRepository.findOneBy({ id });
     if (pessoa === null) {
-      throw new PessoaNotFoundException();
+      throw new NotFoundException();
     }
     return this.pessoaWrapper.mapEntityToDto(pessoa);
   }
@@ -47,7 +53,7 @@ export class PessoasService {
   async update(id: number, dto: UpdatePessoaDto): Promise<void> {
     const pessoa = await this.pessoaRepository.findOneBy({ id });
     if (pessoa === null) {
-      throw new PessoaNotFoundException();
+      throw new NotFoundException();
     }
     if (dto.email) {
       const userByEmail = await this.pessoaRepository
@@ -55,7 +61,7 @@ export class PessoasService {
         .where('LOWER(user) = LOWER(:email)', { email: dto.email })
         .getOne();
       if (userByEmail !== null) {
-        throw new AlreadyExistsPessoaWithException('E-mail');
+        throw new ConflictException('Já existe uma pessoa com esse e-mail.');
       } else {
         pessoa.email = dto.email.toLocaleLowerCase();
       }
@@ -72,7 +78,7 @@ export class PessoasService {
   async remove(id: number): Promise<void> {
     const pessoa = await this.pessoaRepository.findOneBy({ id });
     if (pessoa === null) {
-      throw new PessoaNotFoundException();
+      throw new NotFoundException();
     }
     this.pessoaRepository.remove(pessoa);
   }

@@ -1,5 +1,4 @@
-import { Injectable } from '@nestjs/common';
-import { RecadoNotFoundException } from './exceptions';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Recado } from './entities/recado.entity';
 import { UpdateRecadoDto } from './dto/update-recado.dto';
 import { RecadoDto } from './dto/recado.dto';
@@ -8,7 +7,6 @@ import { ILike, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RecadoDtoPaginate } from './dto/recado-paginate.dto';
 import { RecadosWrapper } from './recados.wrapper';
-import { PessoaNotFoundException } from 'src/pessoas/exceptions';
 import { Pessoa } from 'src/pessoas/entities/pessoa.entity';
 import { FindAllQueryDto } from './dto/find-all-query.dto';
 
@@ -32,13 +30,13 @@ export class RecadosService {
       id: dto.toPessoaId,
     });
     if (toPessoa === null) {
-      throw new PessoaNotFoundException('Pessoa de destino não encontrada');
+      throw new NotFoundException('Pessoa de destino não encontrada');
     }
     const fromPessoa = await this.pessoaRepository.findOneBy({
       id: dto.fromPessoaId,
     });
     if (fromPessoa === null) {
-      throw new PessoaNotFoundException('Pessoa de origem não encontrada');
+      throw new NotFoundException('Pessoa de origem não encontrada');
     }
 
     const recado = await this.recadoRepository.create({
@@ -55,7 +53,7 @@ export class RecadosService {
   async deleteOne(id: number): Promise<void> {
     const recado = await this.recadoRepository.findOneBy({ id });
     if (!recado) {
-      throw new RecadoNotFoundException('Recado não encontrado.');
+      throw new NotFoundException('Recado não encontrado.');
     }
     await this.recadoRepository.delete(id);
   }
@@ -82,7 +80,7 @@ export class RecadosService {
       },
     });
     if (!recado) {
-      throw new RecadoNotFoundException('Recado não encontrado.');
+      throw new NotFoundException('Recado não encontrado.');
     }
     return recado;
   }
@@ -134,7 +132,7 @@ export class RecadosService {
   async updateOne(id: number, dto: UpdateRecadoDto): Promise<void> {
     const recado = await this.recadoRepository.findOneBy({ id });
     if (!recado) {
-      throw new RecadoNotFoundException('Recado não encontrado.');
+      throw new NotFoundException('Recado não encontrado.');
     }
 
     if (dto.toPessoaId) {
@@ -142,7 +140,7 @@ export class RecadosService {
         id: dto.toPessoaId,
       });
       if (toPessoa === null) {
-        throw new PessoaNotFoundException('Pessoa de destino não encontrada');
+        throw new NotFoundException('Pessoa de destino não encontrada');
       } else {
         recado.to = toPessoa;
       }
@@ -152,7 +150,7 @@ export class RecadosService {
         id: dto.fromPessoaId,
       });
       if (fromPessoa === null) {
-        throw new PessoaNotFoundException('Pessoa de origem não encontrada');
+        throw new NotFoundException('Pessoa de origem não encontrada');
       } else {
         recado.from = fromPessoa;
       }
