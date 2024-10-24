@@ -13,6 +13,7 @@ import {
   Post,
   Query,
   UseInterceptors,
+  UsePipes,
 } from '@nestjs/common';
 import { FindAllQueryDto } from './dto/find-all-query.dto';
 import { RecadosService } from './recados.service';
@@ -21,14 +22,15 @@ import { CreateRecadoDto } from './dto/create-recado.dto';
 import { UpdateRecadoDto } from './dto/update-recado.dto';
 import { ParseIntIdPipe } from 'src/common/pipes/parse-int-id.pipe';
 import { AddHeaderInterceptor } from 'src/common/interceptors/add-header.interceptor';
+import { TimingConnectionInterceptior } from 'src/common/interceptors/timing-connection.interceptor';
 
 @Controller('recados')
-@UseInterceptors(AddHeaderInterceptor)
 export class RecadosController {
   constructor(private readonly recadosService: RecadosService) {}
 
   @Get()
   @HttpCode(HttpStatus.OK)
+  @UseInterceptors(TimingConnectionInterceptior)
   findAll(@Query() dto: FindAllQueryDto) {
     return this.recadosService.findAll(dto);
   }
@@ -52,6 +54,7 @@ export class RecadosController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
+  @UseInterceptors(AddHeaderInterceptor)
   createOne(@Body() dto: CreateRecadoDto) {
     return this.recadosService.createOne(dto);
   }
@@ -76,7 +79,8 @@ export class RecadosController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async deleteOne(@Param('id', ParseIntPipe) id: number) {
+  @UsePipes(ParseIntPipe)
+  async deleteOne(@Param('id') id: number) {
     try {
       await this.recadosService.deleteOne(id);
     } catch (err) {
