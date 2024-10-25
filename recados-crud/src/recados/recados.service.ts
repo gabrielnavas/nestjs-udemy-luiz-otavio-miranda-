@@ -9,6 +9,7 @@ import { RecadoDtoPaginate } from './dto/recado-paginate.dto';
 import { RecadosWrapper } from './recados.wrapper';
 import { Pessoa } from 'src/pessoas/entities/pessoa.entity';
 import { FindAllQueryDto } from './dto/find-all-query.dto';
+import { RecadosUtils } from './recados.utils';
 
 // Atenção
 // em produção deve-se usar transações
@@ -23,9 +24,14 @@ export class RecadosService {
     private readonly pessoaRepository: Repository<Pessoa>,
 
     private readonly recadosWrapper: RecadosWrapper,
+    
+    private readonly recadosUtils: RecadosUtils,
   ) {}
 
   async createOne(dto: CreateRecadoDto): Promise<RecadoDto> {
+    console.log(this.recadosUtils.inverteString('hello world!'));
+    
+
     const toPessoa = await this.pessoaRepository.findOneBy({
       id: dto.toPessoaId,
     });
