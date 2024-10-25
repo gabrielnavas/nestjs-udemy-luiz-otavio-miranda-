@@ -28,6 +28,7 @@ import { ChangeDataInterceptor } from 'src/common/interceptors/change-data.inter
 import { AuthTokenInterceptor } from 'src/common/interceptors/auth-token.interceptor';
 import { Request, request } from 'express';
 import { IsAdminGuard } from 'src/common/guards/is-admin.guard';
+import { UrlParam } from 'src/common/params/url-params.decorator';
 
 @Controller('recados')
 @UseGuards(IsAdminGuard)
@@ -38,7 +39,8 @@ export class RecadosController {
   @Get()
   @HttpCode(HttpStatus.OK)
   @UseInterceptors(AuthTokenInterceptor, TimingConnectionInterceptior)
-  findAll(@Query() dto: FindAllQueryDto) {
+  findAll(@Query() dto: FindAllQueryDto, @UrlParam() url: string) {
+    console.log(url);
     return this.recadosService.findAll(dto);
   }
 
