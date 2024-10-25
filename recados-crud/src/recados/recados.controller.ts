@@ -10,6 +10,7 @@ import {
   Patch,
   Post,
   Query,
+  Req,
   UseInterceptors,
   UsePipes,
 } from '@nestjs/common';
@@ -24,6 +25,7 @@ import { ErrorHandlingInterceptor } from 'src/common/interceptors/error-handling
 import { SimpleCacheInterceptor } from 'src/common/interceptors/simple-cache.interceptor';
 import { ChangeDataInterceptor } from 'src/common/interceptors/change-data.interceptor';
 import { AuthTokenInterceptor } from 'src/common/interceptors/auth-token.interceptor';
+import { Request, request } from 'express';
 
 @Controller('recados')
 @UseInterceptors(SimpleCacheInterceptor, ChangeDataInterceptor)
@@ -40,7 +42,8 @@ export class RecadosController {
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   @UseInterceptors(ErrorHandlingInterceptor)
-  async findOne(@Param('id', ParseIntIdPipe) id: number) {
+  async findOne(@Param('id', ParseIntIdPipe) id: number, @Req() req: Request) {
+    console.log(req['user']);
     return await this.recadosService.findOne(id);
   }
 
