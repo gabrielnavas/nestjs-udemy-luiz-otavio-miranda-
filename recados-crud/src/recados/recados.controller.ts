@@ -29,6 +29,7 @@ import { AuthTokenInterceptor } from 'src/common/interceptors/auth-token.interce
 import { Request, request } from 'express';
 import { IsAdminGuard } from 'src/common/guards/is-admin.guard';
 import { UrlParam } from 'src/common/params/url-params.decorator';
+import { ReqDataParam } from 'src/common/params/req-data-params.decorator';
 
 @Controller('recados')
 @UseGuards(IsAdminGuard)
@@ -55,7 +56,8 @@ export class RecadosController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   @UseInterceptors(AddHeaderInterceptor)
-  createOne(@Body() dto: CreateRecadoDto) {
+  createOne(@Body() dto: CreateRecadoDto, @ReqDataParam('method') method: string) {
+    console.log(method);
     return this.recadosService.createOne(dto);
   }
 
