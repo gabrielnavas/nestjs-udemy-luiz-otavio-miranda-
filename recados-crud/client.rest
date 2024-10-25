@@ -43,14 +43,15 @@ GET {{baseUrl}}/recados
 ?page=1
 &size=10
 &q=Jungle
+Authorization: Bearer token
 ###
 
 ###
-GET {{baseUrl}}/recados/100000
+GET {{baseUrl}}/recados/1
 ###
 
 ###
-PATCH {{baseUrl}}/recados/1
+PATCH {{baseUrl}}/recados/2
 Content-Type: application/json
 
 {
