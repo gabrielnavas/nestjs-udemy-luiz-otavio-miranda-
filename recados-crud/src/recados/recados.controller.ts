@@ -11,6 +11,7 @@ import {
   Post,
   Query,
   Req,
+  UseGuards,
   UseInterceptors,
   UsePipes,
 } from '@nestjs/common';
@@ -26,8 +27,10 @@ import { SimpleCacheInterceptor } from 'src/common/interceptors/simple-cache.int
 import { ChangeDataInterceptor } from 'src/common/interceptors/change-data.interceptor';
 import { AuthTokenInterceptor } from 'src/common/interceptors/auth-token.interceptor';
 import { Request, request } from 'express';
+import { IsAdminGuard } from 'src/common/guards/is-admin.guard';
 
 @Controller('recados')
+@UseGuards(IsAdminGuard)
 @UseInterceptors(SimpleCacheInterceptor, ChangeDataInterceptor)
 export class RecadosController {
   constructor(private readonly recadosService: RecadosService) {}

@@ -10,6 +10,9 @@ import { RecadosModule } from 'src/recados/recados.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PessoasModule } from 'src/pessoas/pessoas.module';
 import { SimpleMiddleware } from 'src/common/middlewares/simple.middlewares';
+import { AnotherMiddleware } from 'src/common/middlewares/another.middlewares';
+import { APP_GUARD } from '@nestjs/core';
+import { IsAdminGuard } from 'src/common/guards/is-admin.guard';
 
 @Module({
   imports: [
@@ -39,11 +42,17 @@ import { SimpleMiddleware } from 'src/common/middlewares/simple.middlewares';
     RecadosModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: IsAdminGuard,
+    },
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(SimpleMiddleware).forRoutes({
+    consumer.apply(SimpleMiddleware, AnotherMiddleware).forRoutes({
       path: '*',
       method: RequestMethod.ALL,
     });
