@@ -3,6 +3,7 @@
 ### create user
 POST {{baseUrl}}/users
 Content-Type: application/json
+Accept: : application/json
 
 {
   "email": "batman@email.com",
@@ -13,3 +14,15 @@ Content-Type: application/json
 ### find user by id
 GET {{baseUrl}}/users/1
 Accept: : application/json
+
+
+
+### signin
+POST {{baseUrl}}/auth/signin
+Content-Type: application/json
+Accept: : application/json
+
+{
+  "email": "batman@email.com",
+  "password": "12345678"
+}

@@ -10,7 +10,7 @@ export class UsersService {
 
   constructor(private readonly hashingService: HashingService) {}
 
-  createUser = async (dto: CreateUser): Promise<UserDto> => {
+  async createUser(dto: CreateUser): Promise<UserDto> {
     const user = new User();
     user.email = dto.email;
     user.passwordHash = await this.hashingService.hash(dto.password);
@@ -20,9 +20,9 @@ export class UsersService {
       id: user.id,
       email: user.email,
     };
-  };
+  }
 
-  findUserById = async (id: string) => {
+  async findUserById(id: string) {
     const userIndex = this.users.findIndex((user) => (user.id = id));
     if (userIndex < 0) {
       throw new NotFoundException('User not found.');
@@ -32,5 +32,13 @@ export class UsersService {
       id: user.id,
       email: user.email,
     };
-  };
+  }
+
+  async findUserByEmail(email: string): Promise<User> {
+    const userIndex = this.users.findIndex((user) => user.email === email);
+    if (userIndex < 0) {
+      throw new NotFoundException('User not found.');
+    }
+    return this.users[userIndex];
+  }
 }
