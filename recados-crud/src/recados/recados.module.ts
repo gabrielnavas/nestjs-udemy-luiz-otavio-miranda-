@@ -26,5 +26,6 @@ import { SERVER_NAME } from 'src/common/constants/server-name.constant';
       useValue: 'My Name Is Gab API NEST JS',
     },
   ],
+  exports: [SERVER_NAME]
 })
 export class RecadosModule {}

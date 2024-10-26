@@ -1,5 +1,6 @@
 import {
   ConflictException,
+  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -12,6 +13,7 @@ import { UpdatePessoaDto } from './dto/update-pessoa.dto';
 import { Pessoa } from './entities/pessoa.entity';
 import { PessoaDto } from './dto/pessoa.dto';
 import { PessoaWrapper } from './pessoa.wrapper';
+import { SERVER_NAME } from 'src/common/constants/server-name.constant';
 
 // Atenção
 // em produção deve-se usar transações
@@ -24,8 +26,13 @@ export class PessoasService {
     private readonly pessoaRepository: Repository<Pessoa>,
 
     private readonly pessoaWrapper: PessoaWrapper,
+
+    @Inject(SERVER_NAME)
+    private readonly serverName: string
   ) {}
   async create(dto: CreatePessoaDto): Promise<PessoaDto> {
+    console.log(this.serverName);
+    
     const userByEmail = await this.pessoaRepository.findOneBy({
       email: dto.email,
     });
