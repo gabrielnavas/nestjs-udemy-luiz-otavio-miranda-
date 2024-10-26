@@ -2,15 +2,18 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { User } from './entities/user.entity';
 import { CreateUser } from './dtos/create-user.dto';
 import { UserDto } from './dtos/user.dto';
+import { HashingService } from 'src/auth/hashing/hashing.service';
 
 @Injectable()
 export class UsersService {
   private readonly users: User[] = [];
 
+  constructor(private readonly hashingService: HashingService) {}
+
   createUser = async (dto: CreateUser): Promise<UserDto> => {
     const user = new User();
     user.email = dto.email;
-    user.passwordHash = dto.password;
+    user.passwordHash = await this.hashingService.hash(dto.password);
     this.users.push(user);
 
     return {
