@@ -15,9 +15,30 @@ import { APP_GUARD } from '@nestjs/core';
 import { IsAdminGuard } from 'src/common/guards/is-admin.guard';
 import { ConfigModule } from '@nestjs/config';
 
+import * as Joi from 'joi'
+
 @Module({
   imports: [
-    ConfigModule.forRoot(), // carregar o .env
+    // carregar o .env padrão
+    ConfigModule.forRoot({
+      // envFilePath: ['.env', 'otherDirectory.env']
+      validationSchema: Joi.object({
+        DATABASE_TYPE: Joi.required(),
+
+        PG_HOST: Joi.required(),
+        PG_PORT: Joi.number().min(0),
+        PG_DATABASE: Joi.required(),
+        PG_USERNAME: Joi.required(),
+        PG_PASSWORD: Joi.required(),
+
+        NESTJS_AUTO_LOAD_ENTITIES: Joi.number().min(0).default(0),
+        NESTJS_SYNCHRONIZE_ORM: Joi.number().min(0).default(0),
+        NESTJS_LOG_SQL: Joi.number().min(0).default(0),
+      }),
+    }),
+
+    ConfigModule.forRoot(),
+
     TypeOrmModule.forRoot({
       type: process.env.DATABASE_TYPE as any,
 
@@ -30,15 +51,15 @@ import { ConfigModule } from '@nestjs/config';
 
       // carrega entidades sem precisar especifica-las
       // não precisa especificar as entidades no app module
-      autoLoadEntities: process.env.NESTJS_AUTO_LOAD_ENTITIES === 'true',
+      autoLoadEntities: Boolean(process.env.NESTJS_AUTO_LOAD_ENTITIES),
 
       // sincroniza as tabelas com o banco de dados.
       // não deve ser usado em produção
-      synchronize: process.env.NESTJS_SYNCHRONIZE_ORM === 'true',
+      synchronize: Boolean(process.env.NESTJS_SYNCHRONIZE_ORM),
 
       // habilita o log de queries SQL no console
       // não usar em produção
-      logging: process.env.NESTJS_LOG_SQL === 'true',
+      logging: Boolean(process.env.NESTJS_LOG_SQL),
     }),
     PessoasModule,
     RecadosModule,
