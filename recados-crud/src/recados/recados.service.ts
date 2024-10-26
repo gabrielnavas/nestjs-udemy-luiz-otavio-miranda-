@@ -14,6 +14,7 @@ import { PessoasService } from 'src/pessoas/pessoas.service';
 import { LOWER_CASE, SERVER_NAME } from 'src/common/constants/server-name.constant';
 import { ProtocolRegEx } from 'src/common/regex/protocol.regex';
 import { OnlyLowercaseLetterRegex } from 'src/common/regex/only-lowercase-letter.regex';
+import { ConfigService } from '@nestjs/config';
 
 // Atenção
 // em produção deve-se usar transações
@@ -40,9 +41,16 @@ export class RecadosService {
 
     @Inject(LOWER_CASE)
     private readonly onlyLowercaseLetterRegex:  OnlyLowercaseLetterRegex,
+
+
+    private readonly configService: ConfigService,
   ) {}
 
   async createOne(dto: CreateRecadoDto): Promise<RecadoDto> {
+    const hostname = this.configService.get('PG_HOST')
+    console.log(hostname);
+    
+
     const str = '  hello world!!  '
     const strModified = this.protocolRegEx.execute(this.onlyLowercaseLetterRegex.execute(str))
     console.log(this.recadosUtils.inverteString(strModified));

@@ -15,6 +15,7 @@ import {
 import { ProtocolRegEx } from 'src/common/regex/protocol.regex';
 import { RemoveSpacesRegex } from 'src/common/regex/remove-spaces.regex';
 import { OnlyLowercaseLetterRegex } from 'src/common/regex/only-lowercase-letter.regex';
+import { ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { OnlyLowercaseLetterRegex } from 'src/common/regex/only-lowercase-letter
     RecadosWrapper,
     PessoaWrapper,
     RecadosUtils,
+    ConfigService,
     {
       provide: SERVER_NAME,
       useValue: 'My Name Is Gab API NEST JS',
