@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { Recado } from './entities/recado.entity';
 import { UpdateRecadoDto } from './dto/update-recado.dto';
 import { RecadoDto } from './dto/recado.dto';
@@ -29,6 +29,9 @@ export class RecadosService {
     private readonly recadosUtils: RecadosUtils,
 
     private readonly pessoasService: PessoasService,
+
+    @Inject('SERVER_NAME')
+    private readonly serverName:  string,
   ) {}
 
   async createOne(dto: CreateRecadoDto): Promise<RecadoDto> {
@@ -71,6 +74,9 @@ export class RecadosService {
   }
 
   async findOne(id: number) {
+    // mostra o valor injetado
+    console.log(this.serverName);
+    
     const recado = await this.recadoRepository.findOne({
       where: { id },
       relations: ['to', 'from'],

@@ -15,6 +15,15 @@ import { PessoasModule } from 'src/pessoas/pessoas.module';
     forwardRef(() => PessoasModule),
   ],
   controllers: [RecadosController],
-  providers: [RecadosService, RecadosWrapper, PessoaWrapper, RecadosUtils],
+  providers: [
+    RecadosService,
+    RecadosWrapper,
+    PessoaWrapper,
+    RecadosUtils,
+    {
+      provide: 'SERVER_NAME',
+      useValue: 'My Name Is Gab API NEST JS',
+    },
+  ],
 })
 export class RecadosModule {}

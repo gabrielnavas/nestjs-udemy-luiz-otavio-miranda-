@@ -13,6 +13,11 @@ import { RecadosModule } from 'src/recados/recados.module';
   ],
   controllers: [PessoasController],
   providers: [PessoasService, PessoaWrapper],
-  exports: [PessoasService], // para ser usado em outros modulos
+
+   // para ser usado em outros modulos
+  exports: [{
+    provide: PessoasService,
+    useClass: PessoasService,
+  }], 
 })
 export class PessoasModule {}
