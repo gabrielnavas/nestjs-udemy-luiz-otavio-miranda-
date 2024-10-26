@@ -10,6 +10,7 @@ import { RecadosWrapper } from './recados.wrapper';
 import { Pessoa } from 'src/pessoas/entities/pessoa.entity';
 import { FindAllQueryDto } from './dto/find-all-query.dto';
 import { RecadosUtils } from './recados.utils';
+import { PessoasService } from 'src/pessoas/pessoas.service';
 
 // Atenção
 // em produção deve-se usar transações
@@ -24,13 +25,14 @@ export class RecadosService {
     private readonly pessoaRepository: Repository<Pessoa>,
 
     private readonly recadosWrapper: RecadosWrapper,
-    
+
     private readonly recadosUtils: RecadosUtils,
+
+    private readonly pessoasService: PessoasService,
   ) {}
 
   async createOne(dto: CreateRecadoDto): Promise<RecadoDto> {
     console.log(this.recadosUtils.inverteString('hello world!'));
-    
 
     const toPessoa = await this.pessoaRepository.findOneBy({
       id: dto.toPessoaId,
@@ -38,6 +40,10 @@ export class RecadosService {
     if (toPessoa === null) {
       throw new NotFoundException('Pessoa de destino não encontrada');
     }
+
+    console.log('agora posso usar o service pessoas do modulo  pessoas');
+    await this.pessoasService.findOne(toPessoa.id);
+
     const fromPessoa = await this.pessoaRepository.findOneBy({
       id: dto.fromPessoaId,
     });

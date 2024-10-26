@@ -45,7 +45,7 @@ export class PessoasService {
   async findOne(id: number): Promise<PessoaDto> {
     const pessoa = await this.pessoaRepository.findOneBy({ id });
     if (pessoa === null) {
-      throw new NotFoundException();
+      throw new NotFoundException('Pessoa não encontrada');
     }
     return this.pessoaWrapper.mapEntityToDto(pessoa);
   }
