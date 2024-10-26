@@ -11,8 +11,9 @@ import { Pessoa } from 'src/pessoas/entities/pessoa.entity';
 import { FindAllQueryDto } from './dto/find-all-query.dto';
 import { RecadosUtils } from './recados.utils';
 import { PessoasService } from 'src/pessoas/pessoas.service';
-import { SERVER_NAME } from 'src/common/constants/server-name.constant';
+import { LOWER_CASE, SERVER_NAME } from 'src/common/constants/server-name.constant';
 import { ProtocolRegEx } from 'src/common/regex/protocol.regex';
+import { OnlyLowercaseLetterRegex } from 'src/common/regex/only-lowercase-letter.regex';
 
 // Atenção
 // em produção deve-se usar transações
@@ -35,12 +36,15 @@ export class RecadosService {
     @Inject(SERVER_NAME)
     private readonly serverName:  string,
 
-    private readonly regexProtocol: ProtocolRegEx
+    private readonly protocolRegEx: ProtocolRegEx,
+
+    @Inject(LOWER_CASE)
+    private readonly onlyLowercaseLetterRegex:  OnlyLowercaseLetterRegex,
   ) {}
 
   async createOne(dto: CreateRecadoDto): Promise<RecadoDto> {
     const str = '  hello world!!  '
-    const strModified = this.regexProtocol.execute(str)
+    const strModified = this.protocolRegEx.execute(this.onlyLowercaseLetterRegex.execute(str))
     console.log(this.recadosUtils.inverteString(strModified));
 
     const toPessoa = await this.pessoaRepository.findOneBy({
