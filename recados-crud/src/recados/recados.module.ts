@@ -8,6 +8,7 @@ import { PessoaWrapper } from 'src/pessoas/pessoa.wrapper';
 import { Pessoa } from 'src/pessoas/entities/pessoa.entity';
 import { RecadosUtils } from './recados.utils';
 import { PessoasModule } from 'src/pessoas/pessoas.module';
+import { SERVER_NAME } from 'src/common/constants/server-name.constant';
 
 @Module({
   imports: [
@@ -21,7 +22,7 @@ import { PessoasModule } from 'src/pessoas/pessoas.module';
     PessoaWrapper,
     RecadosUtils,
     {
-      provide: 'SERVER_NAME',
+      provide: SERVER_NAME,
       useValue: 'My Name Is Gab API NEST JS',
     },
   ],

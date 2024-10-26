@@ -11,6 +11,7 @@ import { Pessoa } from 'src/pessoas/entities/pessoa.entity';
 import { FindAllQueryDto } from './dto/find-all-query.dto';
 import { RecadosUtils } from './recados.utils';
 import { PessoasService } from 'src/pessoas/pessoas.service';
+import { SERVER_NAME } from 'src/common/constants/server-name.constant';
 
 // Atenção
 // em produção deve-se usar transações
@@ -30,7 +31,7 @@ export class RecadosService {
 
     private readonly pessoasService: PessoasService,
 
-    @Inject('SERVER_NAME')
+    @Inject(SERVER_NAME)
     private readonly serverName:  string,
   ) {}
 
