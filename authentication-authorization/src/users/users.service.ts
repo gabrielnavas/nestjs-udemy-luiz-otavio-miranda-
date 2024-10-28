@@ -10,6 +10,7 @@ import { UserDto } from './dtos/user.dto';
 import { HashingService } from 'src/auth/hashing/hashing.service';
 import { FindUsersDto } from './dtos/find-users.dto';
 import { TokenPayloadDto } from 'src/auth/dtos/token-payload.dto';
+import { Policy } from 'src/auth/enums/route-policies.enum';
 
 @Injectable()
 export class UsersService {
@@ -18,15 +19,25 @@ export class UsersService {
   constructor(private readonly hashingService: HashingService) {}
 
   async createUser(dto: CreateUserDto): Promise<UserDto> {
+    const userPolicies = [
+      Policy.user,
+      Policy.findUserById,
+      Policy.deleteUser,
+      Policy.findAllUsers,
+      Policy.findUsers,
+    ];
     const user = new User();
     user.id = (this.users.length + 1).toString();
     user.email = dto.email;
     user.passwordHash = await this.hashingService.hash(dto.password);
+    user.active = true;
+    user.policies = userPolicies;
     this.users.push(user);
 
     return {
       id: user.id,
       email: user.email,
+      policies: user.policies,
     };
   }
 
@@ -40,6 +51,7 @@ export class UsersService {
       id: user.id,
       email: user.email,
       active: user.active,
+      policies: user.policies,
     };
   }
 
@@ -59,6 +71,7 @@ export class UsersService {
     return users.map((user) => ({
       id: user.id,
       email: user.email,
+      policies: user.policies,
     }));
   }
 

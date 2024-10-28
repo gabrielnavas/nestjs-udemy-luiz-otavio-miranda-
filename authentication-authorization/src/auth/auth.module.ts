@@ -7,8 +7,7 @@ import { UsersModule } from 'src/users/users.module';
 
 import { ConfigModule } from '@nestjs/config';
 import jwtConfig from './config/jwt.config';
-import { JwtModule, JwtService } from '@nestjs/jwt';
-import { AuthTokenGuard } from './guards/auth-token.guard';
+import { JwtModule } from '@nestjs/jwt';
 
 @Global()
 @Module({

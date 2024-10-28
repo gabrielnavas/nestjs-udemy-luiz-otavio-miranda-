@@ -12,11 +12,13 @@ import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import jwtConfig from '../config/jwt.config';
 import { ConfigType } from '@nestjs/config';
-import { REQUEST_TOKEN_PAYLOAD_KEY } from '../auth.constants';
+import { REQUEST_TOKEN_PAYLOAD_KEY, ROUTE_POLICY_KEY } from '../auth.constants';
 import { UsersService } from 'src/users/users.service';
+import { Reflector } from '@nestjs/core';
+import { Policy } from '../enums/route-policies.enum';
 
 @Injectable()
-export class AuthTokenGuard implements CanActivate {
+export class AuthTokenAndPolicyGuard implements CanActivate {
   constructor(
     private readonly jwtService: JwtService,
 
@@ -24,6 +26,8 @@ export class AuthTokenGuard implements CanActivate {
 
     @Inject(jwtConfig.KEY)
     private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
+
+    private readonly reflector: Reflector,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -40,18 +44,40 @@ export class AuthTokenGuard implements CanActivate {
       request[REQUEST_TOKEN_PAYLOAD_KEY] = payload;
 
       const user = await this.userService.findUserById(payload.sub);
-      if (!user.active) {
+      if (!user || !user.active) {
         throw new ForbiddenException('Sua conta está desativada.');
       }
-      return true;
+
+      return this.hasAnyPolicy(user.policies, context);
     } catch (err) {
-      if (err instanceof UnauthorizedException || ForbiddenException || NotFoundException) {
+      if (
+        err instanceof UnauthorizedException ||
+        ForbiddenException ||
+        NotFoundException
+      ) {
         throw err;
       }
       throw new InternalServerErrorException(
         'Ocorreu um problema. Tente novamente mais tarde.',
       );
     }
+  }
+
+  hasAnyPolicy(userPolicies: string[], context: ExecutionContext): boolean {
+    const routePolicyRequired = this.reflector.get<Policy | undefined>(
+      ROUTE_POLICY_KEY,
+      context.getHandler(),
+    );
+
+    // a rota não tem nenhum metadado de policy definida
+    if (!routePolicyRequired) {
+      return true;
+    }
+
+    if (userPolicies.some((policy) => policy === routePolicyRequired)) {
+      return true;
+    }
+    return false;
   }
 
   extractTokenFromHeader(request: Request): string | undefined {

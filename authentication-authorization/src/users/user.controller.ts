@@ -8,16 +8,16 @@ import {
   Param,
   Post,
   Query,
-  Req,
   UseGuards,
 } from '@nestjs/common';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UsersService } from './users.service';
-import { AuthTokenGuard } from 'src/auth/guards/auth-token.guard';
-import { Request } from 'express';
 import { FindUsersDto } from './dtos/find-users.dto';
 import { TokenPayloadParam } from 'src/auth/params/token-payload.param';
 import { TokenPayloadDto } from 'src/auth/dtos/token-payload.dto';
+import { SetRoutePolicy } from 'src/auth/decorators/set-route-policy.decorator';
+import { Policy } from 'src/auth/enums/route-policies.enum';
+import { AuthTokenAndPolicyGuard } from 'src/auth/guards/auth-token-and-policy.guard';
 
 @Controller({ path: 'users' })
 export class UserController {
@@ -29,7 +29,8 @@ export class UserController {
     return await this.userService.createUser(dto);
   }
 
-  @UseGuards(AuthTokenGuard)
+  @SetRoutePolicy(Policy.findUserById)
+  @UseGuards(AuthTokenAndPolicyGuard)
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   async findUserById(
@@ -40,7 +41,8 @@ export class UserController {
     return await this.userService.findUserById(userId);
   }
 
-  @UseGuards(AuthTokenGuard)
+  @SetRoutePolicy(Policy.findUsers)
+  @UseGuards(AuthTokenAndPolicyGuard)
   @Get()
   @HttpCode(HttpStatus.OK)
   async findUsers(
@@ -51,8 +53,8 @@ export class UserController {
     return await this.userService.findUsers(dto);
   }
 
-  
-  @UseGuards(AuthTokenGuard)
+  @SetRoutePolicy(Policy.deleteUser)
+  @UseGuards(AuthTokenAndPolicyGuard)
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteUser(
