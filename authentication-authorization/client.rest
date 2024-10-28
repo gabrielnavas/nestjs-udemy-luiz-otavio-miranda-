@@ -1,7 +1,8 @@
 @baseUrl = http://localhost:3000
-@bearerAuth = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZW1haWwiOiJiYXRtYW5AZW1haWwuY29tIiwiaWF0IjoxNzMwMTI0MzEwLCJleHAiOjE3MzAxMjc5MTAsImF1ZCI6Imh0dHA6Ly9sb2NhbGhvc3Q6MzAwMCIsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6MzAwMCJ9.YvhXNZ18vE2ubk92WTMFV6xwOg09hx0Hjb3sE3A87uo
+@bearerAuth = Bearer {{signin.response.body.accessToken}}
 
 ### create user
+# @name createuser
 POST {{baseUrl}}/users
 Content-Type: application/json
 Accept: : application/json
@@ -13,6 +14,7 @@ Accept: : application/json
 
 
 ### find user by id
+# @name getUserById
 GET {{baseUrl}}/users/1
 Accept: : application/json
 Authorization: {{bearerAuth}}
@@ -20,6 +22,7 @@ Authorization: {{bearerAuth}}
 
 
 ### signin
+# @name signin
 POST {{baseUrl}}/auth/signin
 Content-Type: application/json
 Accept: : application/json

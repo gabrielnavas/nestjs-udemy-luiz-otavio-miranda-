@@ -28,7 +28,7 @@ export class UserController {
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   async findUserById(@Param('id') userId: string, @Req () req: Request) {
-    console.log(req.userId);
+    console.log(req.user);
     return await this.userService.findUserById(userId);
   }
 }
