@@ -5,9 +5,12 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { UsersModule } from 'src/users/users.module';
 
+import { ConfigModule } from '@nestjs/config';
+import jwtConfig from './config/jwt.config';
+
 @Global()
 @Module({
-  imports: [UsersModule],
+  imports: [UsersModule, ConfigModule.forFeature(jwtConfig)],
   controllers: [AuthController],
   providers: [
     {
