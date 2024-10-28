@@ -7,10 +7,15 @@ import { UsersModule } from 'src/users/users.module';
 
 import { ConfigModule } from '@nestjs/config';
 import jwtConfig from './config/jwt.config';
+import { JwtModule } from '@nestjs/jwt';
 
 @Global()
 @Module({
-  imports: [UsersModule, ConfigModule.forFeature(jwtConfig)],
+  imports: [
+    UsersModule,
+    ConfigModule.forFeature(jwtConfig),
+    JwtModule.registerAsync(jwtConfig.asProvider()),
+  ],
   controllers: [AuthController],
   providers: [
     {

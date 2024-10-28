@@ -1,9 +1,10 @@
 import { UsersService } from 'src/users/users.service';
-import { SignInDto } from './dtos/sigin.dto';
+import { SignInDto, SignInResultDto } from './dtos/sigin.dto';
 import { HashingService } from './hashing/hashing.service';
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import jwtConfig from './config/jwt.config';
 import { ConfigType } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
@@ -13,19 +14,34 @@ export class AuthService {
 
     @Inject(jwtConfig.KEY)
     private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
-  ) {
-    console.log(jwtConfiguration);
-  }
 
-  async signIn(dto: SignInDto) {
-    const user = await this.userService.findUserByEmail(dto.email);
+    private readonly jwtService: JwtService,
+  ) {}
+
+  async signIn(dto: SignInDto): Promise<SignInResultDto> {
+    const pessoa = await this.userService.findUserByEmail(dto.email);
     const isValidPassword = await this.hashingService.compare(
       dto.password,
-      user.passwordHash,
+      pessoa.passwordHash,
     );
     if (!isValidPassword) {
       throw new UnauthorizedException('E-mail/Password incorrect.');
     }
-    return '123';
+
+    const accessToken = await this.jwtService.signAsync(
+      {
+        sub: pessoa.id,
+        email: pessoa.email,
+      },
+      {
+        audience: this.jwtConfiguration.audience,
+        issuer: this.jwtConfiguration.issuer,
+        secret: this.jwtConfiguration.secret,
+        expiresIn: this.jwtConfiguration.jwtTtl,
+      },
+    );
+    return {
+      accessToken,
+    };
   }
 }

@@ -12,6 +12,7 @@ export class UsersService {
 
   async createUser(dto: CreateUser): Promise<UserDto> {
     const user = new User();
+    user.id = (this.users.length + 1).toString();
     user.email = dto.email;
     user.passwordHash = await this.hashingService.hash(dto.password);
     this.users.push(user);

@@ -8,9 +8,6 @@ export class AuthController {
 
   @Post('signin')
   async signin(@Body() dto: SignInDto) {
-    const token = await this.authService.signIn(dto);
-    return {
-      token,
-    };
+    return await this.authService.signIn(dto);
   }
 }
