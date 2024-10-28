@@ -20,6 +20,12 @@ Accept: : application/json
 Authorization: {{bearerAuth}}
 
 
+### find users
+# @name findUsers
+GET {{baseUrl}}/users
+Accept: : application/json
+Authorization: {{bearerAuth}}
+
 
 ### signin
 # @name signin

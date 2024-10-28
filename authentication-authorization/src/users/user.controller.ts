@@ -6,13 +6,15 @@ import {
   HttpStatus,
   Param,
   Post,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { CreateUser } from './dtos/create-user.dto';
+import { CreateUserDto } from './dtos/create-user.dto';
 import { UsersService } from './users.service';
 import { AuthTokenGuard } from 'src/auth/guards/auth-token.guard';
 import { Request } from 'express';
+import { FindUsersDto } from './dtos/find-users.dto';
 
 @Controller({ path: 'users' })
 export class UserController {
@@ -20,7 +22,7 @@ export class UserController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  async createUser(@Body() dto: CreateUser) {
+  async createUser(@Body() dto: CreateUserDto) {
     return await this.userService.createUser(dto);
   }
 
@@ -30,5 +32,13 @@ export class UserController {
   async findUserById(@Param('id') userId: string, @Req () req: Request) {
     console.log(req.user);
     return await this.userService.findUserById(userId);
+  }
+
+  @UseGuards(AuthTokenGuard)
+  @Get()
+  @HttpCode(HttpStatus.OK)
+  async findUsers(@Query() dto: FindUsersDto, @Req () req: Request) {
+    console.log(req.user);
+    return await this.userService.findUsers(dto);
   }
 }
