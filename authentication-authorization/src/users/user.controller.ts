@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
@@ -48,5 +49,16 @@ export class UserController {
   ) {
     console.log(tokenPayload);
     return await this.userService.findUsers(dto);
+  }
+
+  
+  @UseGuards(AuthTokenGuard)
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async deleteUser(
+    @Param('id') userId: string,
+    @TokenPayloadParam() tokenPayload: TokenPayloadDto,
+  ) {
+    return await this.userService.deleteUserById(tokenPayload, userId);
   }
 }

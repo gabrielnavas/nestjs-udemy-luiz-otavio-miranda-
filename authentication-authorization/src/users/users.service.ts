@@ -1,9 +1,15 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { User } from './entities/user.entity';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UserDto } from './dtos/user.dto';
 import { HashingService } from 'src/auth/hashing/hashing.service';
 import { FindUsersDto } from './dtos/find-users.dto';
+import { TokenPayloadDto } from 'src/auth/dtos/token-payload.dto';
 
 @Injectable()
 export class UsersService {
@@ -33,7 +39,19 @@ export class UsersService {
     return {
       id: user.id,
       email: user.email,
+      active: user.active,
     };
+  }
+
+  async deleteUserById(tokenPayload: TokenPayloadDto, userId: string) {
+    const userIndex = this.users.findIndex((user) => (user.id = userId));
+    if (userIndex < 0) {
+      throw new NotFoundException('User not found.');
+    }
+    if (tokenPayload.sub !== userId) {
+      throw new UnauthorizedException('You dont have permission for this.');
+    }
+    this.users.splice(userIndex, 1);
   }
 
   async findUsers({ page, size }: FindUsersDto): Promise<UserDto[]> {

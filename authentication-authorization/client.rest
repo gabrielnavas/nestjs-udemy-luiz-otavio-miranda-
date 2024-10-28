@@ -26,6 +26,12 @@ GET {{baseUrl}}/users
 Accept: : application/json
 Authorization: {{bearerAuth}}
 
+### find user by id
+# @name deleteUserById
+DELETE {{baseUrl}}/users/1
+Authorization: {{bearerAuth}}
+
+
 
 ### signin
 # @name signin
