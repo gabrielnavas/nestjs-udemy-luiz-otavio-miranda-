@@ -1,23 +1,27 @@
 import {
   Body,
   Controller,
-  Delete,
-  Get,
   HttpCode,
   HttpStatus,
-  Param,
   Post,
-  Query,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UsersService } from './users.service';
-import { FindUsersDto } from './dtos/find-users.dto';
 import { TokenPayloadParam } from 'src/auth/params/token-payload.param';
 import { TokenPayloadDto } from 'src/auth/dtos/token-payload.dto';
 import { SetRoutePolicy } from 'src/auth/decorators/set-route-policy.decorator';
 import { Policy } from 'src/auth/enums/route-policies.enum';
 import { AuthTokenAndPolicyGuard } from 'src/auth/guards/auth-token-and-policy.guard';
+import { FileInterceptor } from '@nestjs/platform-express';
+
+import { Express } from 'express';
+
+import * as path from 'path';
+import * as fs from 'fs/promises';
+import { randomUUID } from 'crypto';
 
 @Controller({ path: 'users' })
 export class UserController {
@@ -31,11 +35,28 @@ export class UserController {
 
   @SetRoutePolicy(Policy.deleteUser)
   @UseGuards(AuthTokenAndPolicyGuard)
+  @UseInterceptors(FileInterceptor('file'))
   @Post('upload-picture')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  async uploadPicture(@TokenPayloadParam() tokenPayload: TokenPayloadDto) {
-    console.log('opa!');
+  @HttpCode(HttpStatus.CREATED)
+  async uploadPicture(
+    @UploadedFile() file: Express.Multer.File,
+    @TokenPayloadParam() tokenPayload: TokenPayloadDto,
+  ) {
+
+    const fileExtension = path
+      .extname(file.originalname)
+      .toLocaleLowerCase()
+      .substring(1);
+    const fileName = `${tokenPayload.sub}.${fileExtension}`
     
-    return true;
+    const fileFullPath = path.resolve(process.cwd(), 'pictures', 'users', fileName)
+    await fs.writeFile(fileFullPath, file.buffer)
+
+    return {
+      fieldname: file.fieldname,
+      originalname: file.originalname,
+      mimetype: file.mimetype,
+      size: file.size,
+    };
   }
 }

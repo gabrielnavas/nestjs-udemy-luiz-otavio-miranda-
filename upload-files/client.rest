@@ -18,12 +18,12 @@ POST {{baseUrl}}/users/upload-picture
 Authorization: {{bearerAuth}}
 Content-Type: multipart/form-data; boundary=----BoundaryDelimitadorHttp
 
-----BoundaryDelimitadorHttp
-Content-Disposition: form-data; name="file"; filename="abc.jpg"
+------BoundaryDelimitadorHttp
+Content-Disposition: form-data; name="file"; filename="img.jpg"
 Content-Type: image/jpeg
 
-< ./dev/images/abc.jpg 
-----BoundaryDelimitadorHttp--
+< ./dev/images/img.jpg 
+------BoundaryDelimitadorHttp--
 
 
 ### signin
