@@ -12,7 +12,7 @@ Accept: : application/json
   "password": "12345678"
 }
 
-### Upload Picture
+### Upload Single Picture
 # @name uploadPicture
 POST {{baseUrl}}/users/upload-picture
 Authorization: {{bearerAuth}}
@@ -24,6 +24,26 @@ Content-Type: image/jpeg
 
 < ./dev/images/img.jpg 
 ------BoundaryDelimitadorHttp--
+
+
+### Upload Multiple Pictures
+# @name uploadPictures
+POST {{baseUrl}}/users/upload-pictures
+Authorization: {{bearerAuth}}
+Content-Type: multipart/form-data; boundary=----BoundaryDelimitadorHttp
+
+------BoundaryDelimitadorHttp
+Content-Disposition: form-data; name="file"; filename="img.jpg"
+Content-Type: image/jpeg
+
+< ./dev/images/img.jpg 
+------BoundaryDelimitadorHttp
+Content-Disposition: form-data; name="file"; filename="img.jpg"
+Content-Type: image/jpeg
+
+< ./dev/images/img2.jpg 
+------BoundaryDelimitadorHttp--
+
 
 
 ### signin

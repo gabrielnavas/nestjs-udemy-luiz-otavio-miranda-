@@ -5,6 +5,7 @@ import {
   HttpStatus,
   Post,
   UploadedFile,
+  UploadedFiles,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -15,7 +16,7 @@ import { TokenPayloadDto } from 'src/auth/dtos/token-payload.dto';
 import { SetRoutePolicy } from 'src/auth/decorators/set-route-policy.decorator';
 import { Policy } from 'src/auth/enums/route-policies.enum';
 import { AuthTokenAndPolicyGuard } from 'src/auth/guards/auth-token-and-policy.guard';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 
 import { Express } from 'express';
 
@@ -42,15 +43,19 @@ export class UserController {
     @UploadedFile() file: Express.Multer.File,
     @TokenPayloadParam() tokenPayload: TokenPayloadDto,
   ) {
-
     const fileExtension = path
       .extname(file.originalname)
       .toLocaleLowerCase()
       .substring(1);
-    const fileName = `${tokenPayload.sub}.${fileExtension}`
-    
-    const fileFullPath = path.resolve(process.cwd(), 'pictures', 'users', fileName)
-    await fs.writeFile(fileFullPath, file.buffer)
+    const fileName = `${tokenPayload.sub}.${fileExtension}`;
+
+    const fileFullPath = path.resolve(
+      process.cwd(),
+      'pictures',
+      'users',
+      fileName,
+    );
+    await fs.writeFile(fileFullPath, file.buffer);
 
     return {
       fieldname: file.fieldname,
@@ -58,5 +63,34 @@ export class UserController {
       mimetype: file.mimetype,
       size: file.size,
     };
+  }
+
+  @SetRoutePolicy(Policy.deleteUser)
+  @UseGuards(AuthTokenAndPolicyGuard)
+  @UseInterceptors(FilesInterceptor('file'))
+  @Post('upload-pictures')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async uploadPictures(
+    @UploadedFiles() files: Express.Multer.File[],
+    @TokenPayloadParam() tokenPayload: TokenPayloadDto,
+  ) {
+    files.forEach(async (file) => {
+      const fileExtension = path
+        .extname(file.originalname)
+        .toLocaleLowerCase()
+        .substring(1);
+
+      const fileName = `${tokenPayload.sub}:${randomUUID()}:${Date.now()}`;
+
+      const fullFileName = `${fileName}.${fileExtension}`
+
+      const fileFullPath = path.resolve(
+        process.cwd(),
+        'pictures',
+        'users',
+        fullFileName,
+      );
+      await fs.writeFile(fileFullPath, file.buffer);
+    });
   }
 }
