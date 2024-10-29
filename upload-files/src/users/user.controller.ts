@@ -1,8 +1,12 @@
 import {
+  BadRequestException,
   Body,
   Controller,
+  FileTypeValidator,
   HttpCode,
   HttpStatus,
+  MaxFileSizeValidator,
+  ParseFilePipe,
   Post,
   UploadedFile,
   UploadedFiles,
@@ -23,10 +27,14 @@ import { Express } from 'express';
 import * as path from 'path';
 import * as fs from 'fs/promises';
 import { randomUUID } from 'crypto';
+import { FileService } from 'src/shared/file.service';
 
 @Controller({ path: 'users' })
 export class UserController {
-  constructor(private readonly userService: UsersService) {}
+  constructor(
+    private readonly userService: UsersService,
+    private readonly fileService: FileService,
+  ) {}
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
@@ -40,9 +48,27 @@ export class UserController {
   @Post('upload-picture')
   @HttpCode(HttpStatus.CREATED)
   async uploadPicture(
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({ maxSize: 10 * (1024 * 1024) }),
+
+          // Aceita JPEG, JPG, PNG, GIF e BMP
+          // mas ainda não é suficiente
+          // precisa ter alguma biblioteca pra ler o buffer e tentar ver que tipo arquivo é
+          // vou usar o file-type como lib de exemplo
+          new FileTypeValidator({ fileType: /(jpeg|jpg|png|gif|bmp)$/i }),
+        ],
+      }),
+    )
+    file: Express.Multer.File,
     @TokenPayloadParam() tokenPayload: TokenPayloadDto,
   ) {
+    const isImage = await this.fileService.validateImage(file.buffer);
+    if (!isImage) {
+      throw new BadRequestException('Arquivo não é do tipo imagem');
+    }
+
     const fileExtension = path
       .extname(file.originalname)
       .toLocaleLowerCase()
@@ -75,6 +101,11 @@ export class UserController {
     @TokenPayloadParam() tokenPayload: TokenPayloadDto,
   ) {
     files.forEach(async (file) => {
+      const isImage = await this.fileService.validateImage(file.buffer);
+      if (!isImage) {
+        throw new BadRequestException('Arquivo não é do tipo imagem');
+      }
+
       const fileExtension = path
         .extname(file.originalname)
         .toLocaleLowerCase()
@@ -82,7 +113,7 @@ export class UserController {
 
       const fileName = `${tokenPayload.sub}:${randomUUID()}:${Date.now()}`;
 
-      const fullFileName = `${fileName}.${fileExtension}`
+      const fullFileName = `${fileName}.${fileExtension}`;
 
       const fileFullPath = path.resolve(
         process.cwd(),

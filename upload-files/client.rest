@@ -12,6 +12,19 @@ Accept: : application/json
   "password": "12345678"
 }
 
+
+### signin
+# @name signin
+POST {{baseUrl}}/auth/signin
+Content-Type: application/json
+Accept: : application/json
+
+{
+  "email": "batman@email.com",
+  "password": "12345678"
+}
+
+
 ### Upload Single Picture
 # @name uploadPicture
 POST {{baseUrl}}/users/upload-picture
@@ -22,7 +35,7 @@ Content-Type: multipart/form-data; boundary=----BoundaryDelimitadorHttp
 Content-Disposition: form-data; name="file"; filename="img.jpg"
 Content-Type: image/jpeg
 
-< ./dev/images/img.jpg 
+< ./dev/images/img.jpg
 ------BoundaryDelimitadorHttp--
 
 
@@ -44,15 +57,3 @@ Content-Type: image/jpeg
 < ./dev/images/img2.jpg 
 ------BoundaryDelimitadorHttp--
 
-
-
-### signin
-# @name signin
-POST {{baseUrl}}/auth/signin
-Content-Type: application/json
-Accept: : application/json
-
-{
-  "email": "batman@email.com",
-  "password": "12345678"
-}
