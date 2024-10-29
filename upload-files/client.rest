@@ -51,10 +51,10 @@ Content-Type: image/jpeg
 
 < ./dev/images/img.jpg 
 ------BoundaryDelimitadorHttp
-Content-Disposition: form-data; name="file"; filename="img.jpg"
-Content-Type: image/jpeg
+Content-Disposition: form-data; name="file"; filename="img2.png"
+Content-Type: image/png
 
-< ./dev/images/img2.jpg 
+< ./dev/images/img2.png 
 ------BoundaryDelimitadorHttp--
 
 

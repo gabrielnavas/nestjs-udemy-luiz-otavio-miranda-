@@ -2,21 +2,27 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { User } from './entities/user.entity';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UserDto } from './dtos/user.dto';
 import { HashingService } from 'src/auth/hashing/hashing.service';
-import { FindUsersDto } from './dtos/find-users.dto';
-import { TokenPayloadDto } from 'src/auth/dtos/token-payload.dto';
 import { Policy } from 'src/auth/enums/route-policies.enum';
+
+import * as path from 'path';
+import * as fs from 'fs/promises';
+import { FileService } from 'src/shared/file.service';
+import { TokenPayloadDto } from 'src/auth/dtos/token-payload.dto';
+import { randomUUID } from 'crypto';
 
 @Injectable()
 export class UsersService {
   private readonly users: User[] = [];
 
-  constructor(private readonly hashingService: HashingService) {}
+  constructor(
+    private readonly hashingService: HashingService,
+    private readonly fileService: FileService,
+  ) {}
 
   async createUser(dto: CreateUserDto): Promise<UserDto> {
     const userPolicies = [
@@ -61,5 +67,72 @@ export class UsersService {
       throw new NotFoundException('User not found.');
     }
     return this.users[userIndex];
+  }
+
+  async uploadPicture(
+    file: Express.Multer.File,
+    tokenPayload: TokenPayloadDto,
+  ) {
+    const isImage = await this.fileService.validateImage(file.buffer);
+    if (!isImage) {
+      throw new BadRequestException('Arquivo não é do tipo imagem');
+    }
+
+    if (file.size < 1024) {
+      throw new BadRequestException('Imagem é muito pequena.');
+    }
+
+    const fileExtension = path
+      .extname(file.originalname)
+      .toLocaleLowerCase()
+      .substring(1);
+    const fileName = `${tokenPayload.sub}.${fileExtension}`;
+
+    const fileFullPath = path.resolve(
+      process.cwd(),
+      'pictures',
+      'users',
+      fileName,
+    );
+    await fs.writeFile(fileFullPath, file.buffer);
+
+    return {
+      fieldname: file.fieldname,
+      originalname: file.originalname,
+      mimetype: file.mimetype,
+      size: file.size,
+    };
+  }
+
+  async uploadPictures(
+    files: Express.Multer.File[],
+    tokenPayload: TokenPayloadDto,
+  ) {
+    files.forEach(async (file) => {
+      const isImage = await this.fileService.validateImage(file.buffer);
+      if (!isImage) {
+        throw new BadRequestException('Arquivo não é do tipo imagem');
+      }
+      if (file.size < 1024) {
+        throw new BadRequestException('Imagem é muito pequena.');
+      }
+
+      const fileExtension = path
+        .extname(file.originalname)
+        .toLocaleLowerCase()
+        .substring(1);
+
+      const fileName = `${tokenPayload.sub}:${randomUUID()}:${Date.now()}`;
+
+      const fullFileName = `${fileName}.${fileExtension}`;
+
+      const fileFullPath = path.resolve(
+        process.cwd(),
+        'pictures',
+        'users',
+        fullFileName,
+      );
+      await fs.writeFile(fileFullPath, file.buffer);
+    });
   }
 }
