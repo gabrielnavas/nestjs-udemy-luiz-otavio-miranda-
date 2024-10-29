@@ -27,7 +27,7 @@ Accept: : application/json
 
 ### Upload Single Picture
 # @name uploadPicture
-POST {{baseUrl}}/users/upload-picture
+PATCH  {{baseUrl}}/users/upload-picture
 Authorization: {{bearerAuth}}
 Content-Type: multipart/form-data; boundary=----BoundaryDelimitadorHttp
 
@@ -41,7 +41,7 @@ Content-Type: image/jpeg
 
 ### Upload Multiple Pictures
 # @name uploadPictures
-POST {{baseUrl}}/users/upload-pictures
+PATCH {{baseUrl}}/users/upload-pictures
 Authorization: {{bearerAuth}}
 Content-Type: multipart/form-data; boundary=----BoundaryDelimitadorHttp
 

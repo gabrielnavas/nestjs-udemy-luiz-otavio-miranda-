@@ -73,6 +73,13 @@ export class UsersService {
     file: Express.Multer.File,
     tokenPayload: TokenPayloadDto,
   ) {
+    const userIndex = await this.users.findIndex(
+      (user) => user.id === tokenPayload.sub,
+    );
+    if (userIndex === -1) {
+      throw new BadRequestException('Usuário não encontrado.');
+    }
+
     const isImage = await this.fileService.validateImage(file.buffer);
     if (!isImage) {
       throw new BadRequestException('Arquivo não é do tipo imagem');
@@ -95,6 +102,9 @@ export class UsersService {
       fileName,
     );
     await fs.writeFile(fileFullPath, file.buffer);
+
+    this.users[userIndex].picture = file.originalname;
+    console.log(this.users);
 
     return {
       fieldname: file.fieldname,

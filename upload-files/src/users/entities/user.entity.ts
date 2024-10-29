@@ -4,6 +4,7 @@ export class User {
   id: string;
   email: string;
   passwordHash: string;
-  active: boolean
-  policies: Policy[]
+  active: boolean;
+  policies: Policy[];
+  picture?: string;
 }

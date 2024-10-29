@@ -7,6 +7,7 @@ import {
   HttpStatus,
   MaxFileSizeValidator,
   ParseFilePipe,
+  Patch,
   Post,
   UploadedFile,
   UploadedFiles,
@@ -40,7 +41,7 @@ export class UserController {
   @SetRoutePolicy(Policy.deleteUser)
   @UseGuards(AuthTokenAndPolicyGuard)
   @UseInterceptors(FileInterceptor('file'))
-  @Post('upload-picture')
+  @Patch('upload-picture')
   @HttpCode(HttpStatus.CREATED)
   async uploadPicture(
     @UploadedFile(
@@ -65,7 +66,7 @@ export class UserController {
   @SetRoutePolicy(Policy.deleteUser)
   @UseGuards(AuthTokenAndPolicyGuard)
   @UseInterceptors(FilesInterceptor('file'))
-  @Post('upload-pictures')
+  @Patch('upload-pictures')
   @HttpCode(HttpStatus.NO_CONTENT)
   async uploadPictures(
     @UploadedFiles() files: Express.Multer.File[],
