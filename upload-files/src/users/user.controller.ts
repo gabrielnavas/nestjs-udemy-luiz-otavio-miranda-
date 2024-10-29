@@ -69,6 +69,10 @@ export class UserController {
       throw new BadRequestException('Arquivo não é do tipo imagem');
     }
 
+    if (file.size < 1024) {
+      throw new BadRequestException('Imagem é muito pequena.');
+    }
+
     const fileExtension = path
       .extname(file.originalname)
       .toLocaleLowerCase()
@@ -104,6 +108,9 @@ export class UserController {
       const isImage = await this.fileService.validateImage(file.buffer);
       if (!isImage) {
         throw new BadRequestException('Arquivo não é do tipo imagem');
+      }
+      if (file.size < 1024) {
+        throw new BadRequestException('Imagem é muito pequena.');
       }
 
       const fileExtension = path
