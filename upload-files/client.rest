@@ -57,3 +57,8 @@ Content-Type: image/jpeg
 < ./dev/images/img2.jpg 
 ------BoundaryDelimitadorHttp--
 
+
+
+### Download Single Picture
+# @name downloadPicture
+GET {{baseUrl}}/pictures/users/1.jpg
