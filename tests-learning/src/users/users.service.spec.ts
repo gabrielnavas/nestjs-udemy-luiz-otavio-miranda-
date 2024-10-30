@@ -209,4 +209,39 @@ describe('UsersService', () => {
       );
     });
   });
+
+  describe('findUserByEmail', () => {
+    it('should return an user', async () => {
+      // Arrange
+      const email = 'test@email.com';
+      const createUserDto = {
+        email,
+        password: '12345678',
+      };
+
+      // Act
+      await userService.createUser(createUserDto);
+      const result = await userService.findUserByEmail(email);
+
+      // Assert
+      expect(result).toBeDefined();
+      expect(typeof result.id === 'string').toBeTruthy();
+      expect(result.email).toEqual(createUserDto.email);
+      expect(result.policies).toEqual([
+        Policy.user,
+        Policy.findUserById,
+        Policy.deleteUser,
+        Policy.findAllUsers,
+        Policy.findUsers,
+      ]);
+    });
+
+    it('should throw an error if there is no user', async () => {
+      // Arrange
+      // Act
+      const result = userService.findUserByEmail('any@email.com');
+      // Assert
+      expect(result).rejects.toEqual(new NotFoundException('User not found.'));
+    });
+  });
 });
