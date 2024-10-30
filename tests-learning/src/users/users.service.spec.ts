@@ -36,13 +36,10 @@ describe('UsersService', () => {
         email: 'test@example.com',
         password: '12345678',
       };
-      jest.spyOn(hashingService, 'hash').mockResolvedValue('HASH_PASSWORD')
+      jest.spyOn(hashingService, 'hash').mockResolvedValue('HASH_PASSWORD');
 
       //  Act
-      const result = await userService.createUser({
-        email: 'test@example.com',
-        password: '12345678',
-      });
+      const result = await userService.createUser(createUserDto);
 
       //   Assert
       expect(hashingService.hash).toHaveBeenCalledTimes(1);
@@ -60,23 +57,43 @@ describe('UsersService', () => {
       ]);
     });
 
+    it('should throws a unique user email error when create a new user', async () => {
+      //  Arrange
+      const createUserDto: CreateUserDto = {
+        email: 'test@example.com',
+        password: '12345678',
+      };
+
+      //  Act
+      await userService.createUser({
+        email: 'test@example.com',
+        password: '12345678',
+      });
+      const result = userService.createUser({
+        email: 'test@example.com',
+        password: '12345678',
+      });
+
+      //  Assert
+      expect(result).rejects.toThrow(
+        new Error('Usuário já cadastrado com esse e-mail.'),
+      );
+    });
+
     it('should throws a hashing error when create a new user', async () => {
       //  Arrange
       const createUserDto: CreateUserDto = {
         email: 'test@example.com',
         password: '12345678',
       };
-      const hashingError = new  Error('any error hash password')
+      const hashingError = new Error('any error hash password');
       jest.spyOn(hashingService, 'hash').mockRejectedValue(hashingError);
 
       //  Act
-      const result = userService.createUser({
-        email: 'test@example.com',
-        password: '12345678',
-      });
+      const result = userService.createUser(createUserDto);
 
       //   Assert
-      expect(result).rejects.toThrow(hashingError)
+      expect(result).rejects.toThrow(hashingError);
     });
   });
 });

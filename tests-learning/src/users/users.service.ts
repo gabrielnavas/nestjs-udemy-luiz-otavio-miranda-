@@ -19,6 +19,14 @@ export class UsersService {
   constructor(private readonly hashingService: HashingService) {}
 
   async createUser(dto: CreateUserDto): Promise<UserDto> {
+    const userIndexByEmail = this.users.findIndex(
+      (user) =>
+        user.email.toLocaleLowerCase() === dto.email.toLocaleLowerCase(),
+    );
+    if (userIndexByEmail >= 0) {
+     throw new Error('Usuário já cadastrado com esse e-mail.');
+    }
+
     const userPolicies = [
       Policy.user,
       Policy.findUserById,
