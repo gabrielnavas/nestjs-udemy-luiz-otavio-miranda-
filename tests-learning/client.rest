@@ -1,0 +1,45 @@
+@baseUrl = http://localhost:3000
+@bearerAuth = Bearer {{signin.response.body.accessToken}}
+
+### create user
+# @name createuser
+POST {{baseUrl}}/users
+Content-Type: application/json
+Accept: : application/json
+
+{
+  "email": "batman@email.com",
+  "password": "12345678"
+}
+
+
+### find user by id
+# @name getUserById
+GET {{baseUrl}}/users/1
+Accept: : application/json
+Authorization: {{bearerAuth}}
+
+
+### find users
+# @name findUsers
+GET {{baseUrl}}/users
+Accept: : application/json
+Authorization: {{bearerAuth}}
+
+### find user by id
+# @name deleteUserById
+DELETE {{baseUrl}}/users/1
+Authorization: {{bearerAuth}}
+
+
+
+### signin
+# @name signin
+POST {{baseUrl}}/auth/signin
+Content-Type: application/json
+Accept: : application/json
+
+{
+  "email": "batman@email.com",
+  "password": "12345678"
+}
