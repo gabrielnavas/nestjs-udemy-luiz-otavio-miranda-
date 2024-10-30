@@ -3,6 +3,7 @@ import { UsersService } from './users.service';
 import { Test, TestingModule } from '@nestjs/testing';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { Policy } from 'src/auth/enums/route-policies.enum';
+import { NotFoundException } from '@nestjs/common';
 
 describe('UsersService', () => {
   let userService: UsersService;
@@ -94,6 +95,40 @@ describe('UsersService', () => {
 
       //   Assert
       expect(result).rejects.toThrow(hashingError);
+    });
+  });
+
+  describe('findUserById', () => {
+    it('should return an user', async () => {
+      // Arrange
+      const createUserDto = {
+        email: 'test@email.com',
+        password: '12345678',
+      };
+      
+      // Act
+      await userService.createUser(createUserDto);
+      const result = await userService.findUserById('1');
+
+      // Assert
+      expect(result).toBeDefined();
+      expect(typeof result.id === 'string').toBeTruthy();
+      expect(result.email).toEqual(createUserDto.email);
+      expect(result.policies).toEqual([
+        Policy.user,
+        Policy.findUserById,
+        Policy.deleteUser,
+        Policy.findAllUsers,
+        Policy.findUsers,
+      ]);
+    });
+
+    it('should throw an error if there is no user', async () => {
+      // Arrange
+      // Act
+      const result = userService.findUserById('123');
+      // Assert
+      expect(result).rejects.toEqual(new NotFoundException('User not found.'));
     });
   });
 });
