@@ -29,7 +29,7 @@ describe('UsersService', () => {
     expect(hashingService).toBeDefined();
   });
 
-  describe('createUser success', () => {
+  describe('createUser', () => {
     it('should create a new user', async () => {
       //  Arrange
       const createUserDto: CreateUserDto = {
@@ -58,6 +58,25 @@ describe('UsersService', () => {
         Policy.findAllUsers,
         Policy.findUsers,
       ]);
+    });
+
+    it('should throws a hashing error when create a new user', async () => {
+      //  Arrange
+      const createUserDto: CreateUserDto = {
+        email: 'test@example.com',
+        password: '12345678',
+      };
+      const hashingError = new  Error('any error hash password')
+      jest.spyOn(hashingService, 'hash').mockRejectedValue(hashingError);
+
+      //  Act
+      const result = userService.createUser({
+        email: 'test@example.com',
+        password: '12345678',
+      });
+
+      //   Assert
+      expect(result).rejects.toThrow(hashingError)
     });
   });
 });
