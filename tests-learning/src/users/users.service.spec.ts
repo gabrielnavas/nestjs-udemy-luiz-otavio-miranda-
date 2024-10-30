@@ -4,6 +4,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { Policy } from 'src/auth/enums/route-policies.enum';
 import { NotFoundException } from '@nestjs/common';
+import { TokenPayloadDto } from 'src/auth/dtos/token-payload.dto';
 
 describe('UsersService', () => {
   let userService: UsersService;
@@ -105,7 +106,7 @@ describe('UsersService', () => {
         email: 'test@email.com',
         password: '12345678',
       };
-      
+
       // Act
       await userService.createUser(createUserDto);
       const result = await userService.findUserById('1');
@@ -129,6 +130,83 @@ describe('UsersService', () => {
       const result = userService.findUserById('123');
       // Assert
       expect(result).rejects.toEqual(new NotFoundException('User not found.'));
+    });
+  });
+
+  describe('deleteUserById', () => {
+    it('should  delete an user', async () => {
+      // Arrange
+      const createUserDto = {
+        email: 'test@email.com',
+        password: '12345678',
+      };
+      const userId = '1';
+      const tokenPayloadDto: TokenPayloadDto = {
+        aud: '1',
+        email: '1',
+        exp: 1,
+        iat: 1,
+        iss: '1',
+        sub: '1',
+      };
+
+      // Act
+      await userService.createUser(createUserDto);
+      const result = userService.deleteUserById(tokenPayloadDto, userId);
+
+      // Assert
+      expect(result).resolves.toEqual(undefined);
+    });
+
+    it('should throws an error user not found', async () => {
+      // Arrange
+      const createUserDto = {
+        email: 'test@email.com',
+        password: '12345678',
+      };
+      const userId = '1';
+      const tokenPayloadDto: TokenPayloadDto = {
+        aud: '1',
+        email: '1',
+        exp: 1,
+        iat: 1,
+        iss: '1',
+        sub: '1',
+      };
+
+      // Act
+      const result = userService.deleteUserById(tokenPayloadDto, userId);
+
+      // Assert
+      expect(result).rejects.toThrow(new Error('User not found.'));
+    });
+
+    it('should throws an error not permission', async () => {
+      // Arrange
+      const createUserDto = {
+        email: 'test@email.com',
+        password: '12345678',
+      };
+
+      // other user try delete
+      const userId = '2';
+      const tokenPayloadDto: TokenPayloadDto = {
+        aud: '1',
+        email: '1',
+        exp: 1,
+        iat: 1,
+        iss: '1',
+        sub: '1',
+      };
+
+      // Act
+      await userService.createUser(createUserDto);
+      const result = userService.deleteUserById(tokenPayloadDto, userId);
+
+      // Assert
+      expect(result).rejects.toThrow(
+        new Error('You dont have permission for this.'),
+      );
     });
   });
 });
