@@ -17,7 +17,7 @@ describe('UsersService', () => {
         {
           provide: HashingService,
           useValue: {
-            hash: jest.fn().mockResolvedValue('HASH_PASSWORD'),
+            hash: jest.fn(),
           },
         },
       ],
