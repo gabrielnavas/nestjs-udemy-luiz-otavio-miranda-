@@ -1,11 +1,27 @@
+import { HashingService } from 'src/auth/hashing/hashing.service';
+import { UsersService } from './users.service';
+import { Test, TestingModule } from '@nestjs/testing';
+
 describe('UsersService', () => {
-  it('should calculate age', () => {
-    // Configurar - Arrange
-    const age = 32
-    const  name = 'João'
-    // Fazer alguma ação - Act
-    const result = 2024 - age
-    // Conferir se essa ação foi a esperada - Assert
-    expect(result).toEqual(1992)
-  })
-})
+  let userService: UsersService;
+  let hashingService: HashingService;
+
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        UsersService,
+        {
+          provide: HashingService,
+          useValue: {},
+        },
+      ],
+    }).compile();
+    userService = module.get(UsersService);
+    hashingService = module.get(HashingService);
+  });
+
+  it('should be defined', () => {
+    expect(userService).toBeDefined()
+    expect(hashingService).toBeDefined()
+  });
+});
