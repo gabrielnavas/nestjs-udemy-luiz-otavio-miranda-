@@ -24,7 +24,7 @@ export class UsersService {
         user.email.toLocaleLowerCase() === dto.email.toLocaleLowerCase(),
     );
     if (userIndexByEmail >= 0) {
-     throw new Error('Usuário já cadastrado com esse e-mail.');
+      throw new Error('Usuário já cadastrado com esse e-mail.');
     }
 
     const userPolicies = [
@@ -75,6 +75,15 @@ export class UsersService {
   }
 
   async findUsers({ page, size }: FindUsersDto): Promise<UserDto[]> {
+    if (page <= 0) {
+      throw new Error('Page should by greater than 0.');
+    }
+    if (size <= 0) {
+      throw new Error('Size should by greate than 0.');
+    }
+    if(size > 50) {
+      throw  new Error('Size should not be greater than 50.');
+    }
     const users = this.users.slice((page - 1) * size, page * size);
     return users.map((user) => ({
       id: user.id,

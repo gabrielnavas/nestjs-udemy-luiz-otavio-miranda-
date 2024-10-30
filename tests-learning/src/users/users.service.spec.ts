@@ -244,4 +244,59 @@ describe('UsersService', () => {
       expect(result).rejects.toEqual(new NotFoundException('User not found.'));
     });
   });
+
+  describe('findUsers', () => {
+    it('should return many users', async () => {
+      // Arrange
+      const createUserDtos = new Array(11).fill('').map((_, index) => ({
+        email: `test${index}@email.com`,
+        password: '12345678',
+      }));
+
+      // Act
+      createUserDtos.forEach((dto) => userService.createUser(dto));
+      const users = await userService.findUsers({ page: 1, size: 10 });
+
+      // Assert
+      expect(users).toBeDefined();
+      expect(typeof users === 'object').toBeTruthy();
+      users.forEach((user, index) => {
+        expect(typeof user.id === 'string').toBeTruthy();
+        expect(user.email).toEqual(`test${index}@email.com`);
+        expect(user.policies).toEqual([
+          Policy.user,
+          Policy.findUserById,
+          Policy.deleteUser,
+          Policy.findAllUsers,
+          Policy.findUsers,
+        ]);
+      });
+    });
+
+    it('should throws an error if page is 0 or less', async () => {
+      // Act
+      const promise =  userService.findUsers({ page: 0, size: 10 });
+
+      // Assert
+      expect(promise).rejects.toThrow(new Error('Page should by greater than 0.'));
+    });
+
+    
+    it('should throws an error if size is 0 or less', async () => {
+      // Act
+      const promise =  userService.findUsers({ page: 1, size: 0 });
+
+      // Assert
+      expect(promise).rejects.toThrow(new Error('Size should by greate than 0.'));
+    });
+
+      
+    it('should throws an error if size greater than 50', async () => {
+      // Act
+      const promise =  userService.findUsers({ page: 1, size: 51 });
+
+      // Assert
+      expect(promise).rejects.toThrow(new Error('Size should not be greater than 50.'));
+    });
+  });
 });
