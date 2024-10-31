@@ -1,4 +1,4 @@
-import { HttpStatus, INestApplication } from '@nestjs/common';
+import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppController } from 'src/app/app.controller';
@@ -31,7 +31,7 @@ describe('UsersController (e2e)', () => {
     it('should create a user with success', async () => {
       const createPessoaDto = {
         email: 'any@email.com',
-        password: '123455678',
+        password: '12345678',
       };
       const response = await request(app.getHttpServer())
         .post('/users')
@@ -48,6 +48,59 @@ describe('UsersController (e2e)', () => {
         Policy.findAllUsers,
         Policy.findUsers,
       ]);
+    });
+
+    it('should throws an error', async () => {
+      //  Arrange
+      const params = [
+        {
+          data: {
+            email: 'any@',
+            password: '12345678',
+          },
+          error: {
+            error: 'Bad Request',
+            message: ['E-mail está inválido.'],
+            statusCode: HttpStatus.BAD_REQUEST,
+          },
+        },
+        {
+          data: {
+            email: 'any@email.com',
+            password: '1234567',
+          },
+          error: {
+            error: 'Bad Request',
+            message: ['A senha deve ter no mínimo 8 caracteres.'],
+            statusCode: HttpStatus.BAD_REQUEST,
+          },
+        },
+        {
+          data: {
+            email: 'any@email.com',
+            password: new Array(71)
+              .fill('')
+              .map(() => 'a')
+              .join(''),
+          },
+          error: {
+            error: 'Bad Request',
+            message: ['A senha deve ter no máximo 70 caracteres.'],
+            statusCode: HttpStatus.BAD_REQUEST,
+          },
+        },
+      ];
+
+      //  Act & Assert 
+      const promises = params.map(async (param) => {
+        const response = await request(app.getHttpServer())
+          .post('/users')
+          .send(param.data);
+
+        expect(response.body).toEqual(param.error);
+        expect(response.statusCode).toBe(HttpStatus.BAD_REQUEST);
+      });
+      await Promise.all(promises);
     });
   });
 });

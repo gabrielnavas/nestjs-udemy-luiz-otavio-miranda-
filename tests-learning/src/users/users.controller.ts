@@ -37,7 +37,6 @@ export class UsersController {
     @Param('id') userId: string,
     @TokenPayloadParam() tokenPayload: TokenPayloadDto,
   ) {
-    console.log(tokenPayload);
     return await this.userService.findUserById(userId);
   }
 
