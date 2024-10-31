@@ -20,7 +20,7 @@ import { Policy } from 'src/auth/enums/route-policies.enum';
 import { AuthTokenAndPolicyGuard } from 'src/auth/guards/auth-token-and-policy.guard';
 
 @Controller({ path: 'users' })
-export class UserController {
+export class UsersController {
   constructor(private readonly userService: UsersService) {}
 
   @Post()
