@@ -258,7 +258,6 @@ describe('UsersService', () => {
       const users = await userService.findUsers({ page: 1, size: 10 });
 
       // Assert
-      expect(users).toBeDefined();
       expect(typeof users === 'object').toBeTruthy();
       users.forEach((user, index) => {
         expect(typeof user.id === 'string').toBeTruthy();
@@ -271,6 +270,15 @@ describe('UsersService', () => {
           Policy.findUsers,
         ]);
       });
+    });
+
+    it('should return zero length users', async () => {
+      // Act
+      const users = await userService.findUsers({ page: 1, size: 10 });
+
+      // Assert
+      expect(typeof users === 'object').toBeTruthy();
+      expect(users.length).toEqual(0);
     });
 
     it('should throws an error if page is 0 or less', async () => {
