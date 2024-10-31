@@ -1,4 +1,4 @@
-import { INestApplication } from '@nestjs/common';
+import { HttpStatus, INestApplication } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppController } from 'src/app/app.controller';
@@ -37,10 +37,10 @@ describe('UsersController (e2e)', () => {
         .post('/users')
         .send(createPessoaDto);
 
-      expect(response.status).toBe(201);
-      expect(typeof response.body === 'object').toBeTruthy();
-      expect(typeof response.body.id === 'string').toBeTruthy();
-      expect(typeof response.body.email === 'string').toBeTruthy();
+      expect(response.status).toBe(HttpStatus.CREATED);
+      expect(response.body).toEqual(expect.any(Object));
+      expect(response.body.id).toEqual(expect.any(String));
+      expect(response.body.email).toEqual(expect.any(String));
       expect(response.body.policies).toEqual([
         Policy.user,
         Policy.findUserById,
