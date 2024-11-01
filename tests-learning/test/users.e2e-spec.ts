@@ -91,7 +91,7 @@ describe('UsersController (e2e)', () => {
         },
       ];
 
-      //  Act & Assert 
+      //  Act & Assert
       const promises = params.map(async (param) => {
         const response = await request(app.getHttpServer())
           .post('/users')
@@ -101,6 +101,53 @@ describe('UsersController (e2e)', () => {
         expect(response.statusCode).toBe(HttpStatus.BAD_REQUEST);
       });
       await Promise.all(promises);
+    });
+  });
+
+  describe('/users (GET)', () => {
+    it('should return unautorized', async () => {
+      await request(app.getHttpServer()).get('/users').expect(401).expect({
+        message: 'Missing token',
+        error: 'Unauthorized',
+        statusCode: 401,
+      });
+    });
+
+    it('should return an user', async () => {
+      // Arrive
+      const createPessoaDto = {
+        email: 'any@email.com',
+        password: '12345678',
+      };
+      const signInDto = {
+        email: createPessoaDto.email,
+        password: createPessoaDto.password,
+      };
+
+      // Act
+      const createUserResponse = await request(app.getHttpServer())
+        .post('/users')
+        .send(createPessoaDto);
+      const signInResponse = await request(app.getHttpServer())
+        .post('/auth/signin')
+        .send(signInDto);
+
+      const response = await request(app.getHttpServer())
+        .get(`/users/${createUserResponse.body.id}`)
+        .set('Authorization', `Bearer ${signInResponse.body.accessToken}`);
+
+      // Assert
+      expect(response.status).toBe(HttpStatus.OK);
+      expect(response.body).toEqual(expect.any(Object));
+      expect(response.body.id).toEqual(expect.any(String));
+      expect(response.body.email).toEqual(expect.any(String));
+      expect(response.body.policies).toEqual([
+        Policy.user,
+        Policy.findUserById,
+        Policy.deleteUser,
+        Policy.findAllUsers,
+        Policy.findUsers,
+      ]);
     });
   });
 });

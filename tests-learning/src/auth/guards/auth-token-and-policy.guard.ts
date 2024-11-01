@@ -34,7 +34,7 @@ export class AuthTokenAndPolicyGuard implements CanActivate {
     const request: Request = context.switchToHttp().getRequest();
     const token = this.extractTokenFromHeader(request);
     if (!token) {
-      throw new UnauthorizedException('E-mail/Senha incorreto.');
+      throw new UnauthorizedException('Missing token');
     }
 
     try {
