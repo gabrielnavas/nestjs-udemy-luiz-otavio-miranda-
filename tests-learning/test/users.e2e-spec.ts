@@ -104,9 +104,9 @@ describe('UsersController (e2e)', () => {
     });
   });
 
-  describe('/users (GET)', () => {
+  describe('/users/:id (GET)', () => {
     it('should return unautorized', async () => {
-      await request(app.getHttpServer()).get('/users').expect(401).expect({
+      await request(app.getHttpServer()).get('/users/1').expect(401).expect({
         message: 'Missing token',
         error: 'Unauthorized',
         statusCode: 401,
@@ -142,6 +142,60 @@ describe('UsersController (e2e)', () => {
       expect(response.body.id).toEqual(expect.any(String));
       expect(response.body.email).toEqual(expect.any(String));
       expect(response.body.policies).toEqual([
+        Policy.user,
+        Policy.findUserById,
+        Policy.deleteUser,
+        Policy.findAllUsers,
+        Policy.findUsers,
+      ]);
+    });
+  });
+
+  describe('/users (GET)', () => {
+    it('should return unautorized', async () => {
+      await request(app.getHttpServer()).get('/users').expect(401).expect({
+        message: 'Missing token',
+        error: 'Unauthorized',
+        statusCode: 401,
+      });
+    });
+
+    it('should return users', async () => {
+      // Arrange
+      const usersCreatedLength = 10;
+      const createPessoaDtos = new Array(usersCreatedLength)
+        .fill('')
+        .map((_, index) => ({
+          email: `any${index}@email.com`,
+          password: '12345678',
+        }));
+      const signInDto = {
+        email: createPessoaDtos[0].email,
+        password: createPessoaDtos[0].password,
+      };
+
+      // Act
+      for (let i = 0; i < usersCreatedLength; i++) {
+        await request(app.getHttpServer())
+          .post('/users')
+          .send(createPessoaDtos[i]);
+      }
+
+      const signInResponse = await request(app.getHttpServer())
+        .post('/auth/signin')
+        .send(signInDto);
+
+      const response = await request(app.getHttpServer())
+        .get(`/users?page=1&size=${usersCreatedLength}`)
+        .set('Authorization', `Bearer ${signInResponse.body.accessToken}`);
+
+      // Assert
+      expect(response.status).toBe(HttpStatus.OK);
+      expect(response.body).toEqual(expect.any(Object));
+      expect(response.body.length).toEqual(usersCreatedLength);
+      expect(response.body[0].id).toEqual(expect.any(String));
+      expect(response.body[0].email).toEqual(expect.any(String));
+      expect(response.body[0].policies).toEqual([
         Policy.user,
         Policy.findUserById,
         Policy.deleteUser,
